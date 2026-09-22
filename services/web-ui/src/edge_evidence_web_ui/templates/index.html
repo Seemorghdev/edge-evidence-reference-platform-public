@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edge Evidence Reference Platform</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Synthetic-only reference platform</p>
+      <h1>Artifact evidence journey</h1>
+      <p>Public contracts, bounded inspection, and deterministic fixtures without provider or worker authority.</p>
+    </header>
+    <section class="controls">
+      <button id="refresh">Refresh artifacts</button>
+      <span id="status">Ready</span>
+    </section>
+    <section id="artifacts" class="grid" aria-live="polite"></section>
+  </main>
+  <script>
+    const evidenceApi = {{ evidence_api_url | tojson }};
+    const edgeAgent = {{ edge_agent_url | tojson }};
+    const statusEl = document.getElementById('status');
+    const artifactsEl = document.getElementById('artifacts');
+
+    async function inspect(artifact, target) {
+      target.textContent = 'Inspecting…';
+      const response = await fetch(`${edgeAgent}/api/v1/inspect`, {
+        method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(artifact)
+      });
+      if (!response.ok) {
+        throw new Error(`inspection request failed (${response.status})`);
+      }
+      const result = await response.json();
+      target.textContent = `${result.classification}: ${result.explanation}`;
+    }
+
+    function appendTextElement(parent, tagName, text, className) {
+      const element = document.createElement(tagName);
+      element.textContent = text;
+      if (className) element.className = className;
+      parent.appendChild(element);
+      return element;
+    }
+
+    async function load() {
+      statusEl.textContent = 'Loading…';
+      artifactsEl.replaceChildren();
+      try {
+        const response = await fetch(`${evidenceApi}/api/v1/artifacts`);
+        if (!response.ok) {
+          throw new Error(`artifact request failed (${response.status})`);
+        }
+        const artifacts = await response.json();
+        if (!Array.isArray(artifacts)) {
+          throw new Error('artifact response was not a list');
+        }
+        for (const artifact of artifacts) {
+          const card = document.createElement('article');
+          appendTextElement(card, 'h2', artifact.artifact_id);
+          appendTextElement(card, 'p', artifact.state, 'state');
+          appendTextElement(card, 'code', artifact.digest);
+          const inspection = appendTextElement(card, 'p', 'Not inspected', 'inspection');
+          const button = appendTextElement(card, 'button', 'Inspect');
+          button.addEventListener('click', async () => {
+            try {
+              await inspect(artifact, inspection);
+            } catch (error) {
+              inspection.textContent = `Unavailable: ${error}`;
+            }
+          });
+          artifactsEl.appendChild(card);
+        }
+        statusEl.textContent = `${artifacts.length} synthetic artifacts`;
+      } catch (error) {
+        statusEl.textContent = `Unavailable: ${error}`;
+      }
+    }
+    document.getElementById('refresh').addEventListener('click', load);
+    load();
+  </script>
+</body>
+</html>
