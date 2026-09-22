@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-ui
+  namespace: edge-evidence
+  labels: {app.kubernetes.io/name: web-ui, app.kubernetes.io/part-of: edge-evidence}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: web-ui}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: web-ui, app.kubernetes.io/part-of: edge-evidence}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: web-ui
+          image: edge-evidence/web-ui:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8082
+          env:
+            - name: EVIDENCE_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-evidence-config
+                  key: EVIDENCE_API_URL
+            - name: EDGE_AGENT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-evidence-config
+                  key: EDGE_AGENT_URL
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-ui
+  namespace: edge-evidence
+spec:
+  selector: {app.kubernetes.io/name: web-ui}
+  ports:
+    - name: http
+      port: 8082
+      targetPort: http

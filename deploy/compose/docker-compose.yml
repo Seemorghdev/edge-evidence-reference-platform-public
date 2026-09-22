@@ -1,0 +1,79 @@
+name: edge-evidence-reference-platform
+services:
+  evidence-api:
+    build:
+      context: ../..
+      dockerfile: services/evidence-api/Dockerfile
+    image: edge-evidence/evidence-api:local
+    environment:
+      PORT: "8080"
+      ALLOWED_ORIGINS: http://localhost:8082,http://127.0.0.1:8082
+    ports: ["8080:8080"]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"]
+      interval: 5s
+      timeout: 2s
+      retries: 12
+
+  edge-agent:
+    build:
+      context: ../..
+      dockerfile: services/edge-agent/Dockerfile
+    image: edge-evidence/edge-agent:local
+    environment:
+      PORT: "8081"
+      ALLOWED_ORIGINS: http://localhost:8082,http://127.0.0.1:8082
+      EDGE_AGENT_ENABLE_ADK: "0"
+    ports: ["8081:8081"]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8081/healthz')"]
+      interval: 5s
+      timeout: 2s
+      retries: 12
+
+  web-ui:
+    build:
+      context: ../..
+      dockerfile: services/web-ui/Dockerfile
+    image: edge-evidence/web-ui:local
+    environment:
+      PORT: "8082"
+      EVIDENCE_API_URL: http://localhost:8080
+      EDGE_AGENT_URL: http://localhost:8081
+    ports: ["8082:8082"]
+    depends_on:
+      evidence-api: {condition: service_healthy}
+      edge-agent: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8082/healthz')"]
+      interval: 5s
+      timeout: 2s
+      retries: 12
+
+  integration-runner:
+    build:
+      context: ../..
+      dockerfile: tools/integration-runner/Dockerfile
+    image: edge-evidence/integration-runner:local
+    profiles: [tools]
+    depends_on:
+      evidence-api: {condition: service_healthy}
+      edge-agent: {condition: service_healthy}
+    command:
+      - run
+      - --evidence-api-url
+      - http://evidence-api:8080
+      - --edge-agent-url
+      - http://edge-agent:8081
+      - --output
+      - /tmp/result.json
+
+  load-generator:
+    build:
+      context: ../..
+      dockerfile: tools/load-generator/Dockerfile
+    image: edge-evidence/load-generator:local
+    profiles: [load]
+    depends_on:
+      evidence-api: {condition: service_healthy}
+    command: [--base-url, http://evidence-api:8080, --count, "25", --delay-ms, "25"]
