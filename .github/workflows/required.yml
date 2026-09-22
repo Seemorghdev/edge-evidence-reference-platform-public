@@ -1,0 +1,34 @@
+name: required
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: required-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install workspace
+        run: python scripts/install_workspace.py --dev
+      - name: Lint
+        run: ruff check packages services tools tests scripts
+      - name: Test application and projection boundaries
+        run: pytest
+      - name: Verify history-free projection surface
+        run: python scripts/check_projection.py
+      - name: Validate local Compose model
+        run: docker compose -f deploy/compose/docker-compose.yml config --quiet

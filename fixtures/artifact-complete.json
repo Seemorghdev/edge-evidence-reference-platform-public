@@ -1,0 +1,12 @@
+{
+  "artifact_id": "art_fixture0001",
+  "created_at": "2026-01-01T00:00:00Z",
+  "digest": "sha256:91e7b1402f91a840a88d3612d6aebdc7cf9b75a3601b125f444ad1ca9be2c400",
+  "labels": {
+    "authority": "synthetic",
+    "fixture": "complete"
+  },
+  "snapshot_eligible": true,
+  "source": "synthetic",
+  "state": "complete"
+}

@@ -1,0 +1,6 @@
+Edge Evidence Reference Platform
+Copyright 2026 Seemorghdev
+
+This product includes original scaffolding informed by the organization and developer-workflow patterns of GoogleCloudPlatform/microservices-demo and google/adk-samples, both Apache License 2.0 projects.
+
+No retail-domain or expense-domain behavior is included. See THIRD_PARTY_NOTICES.md.

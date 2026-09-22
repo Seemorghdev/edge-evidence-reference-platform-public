@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evidence-api
+  namespace: edge-evidence
+  labels: {app.kubernetes.io/name: evidence-api, app.kubernetes.io/part-of: edge-evidence}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: evidence-api}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: evidence-api, app.kubernetes.io/part-of: edge-evidence}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: evidence-api
+          image: edge-evidence/evidence-api:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: ALLOWED_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-evidence-config
+                  key: ALLOWED_ORIGINS
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: evidence-api
+  namespace: edge-evidence
+spec:
+  selector: {app.kubernetes.io/name: evidence-api}
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

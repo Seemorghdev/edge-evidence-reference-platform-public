@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edge-evidence-shared-contracts"
+version = "0.2.0"
+description = "Stable models, component contracts, and small HTTP clients for edge-evidence services."
+requires-python = ">=3.11,<3.14"
+license = "Apache-2.0"
+dependencies = [
+  "httpx>=0.27,<1",
+  "pydantic>=2.8,<3",
+  "pyyaml>=6,<7",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
