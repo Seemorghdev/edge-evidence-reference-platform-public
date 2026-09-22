@@ -30,10 +30,11 @@ PROJECT_COORDINATE = re.compile(r"\bproject-[a-z0-9-]{8,}\b", re.IGNORECASE)
 
 def iter_text_files() -> list[Path]:
     files: list[Path] = []
+    ignored_parts = {".venv", "__pycache__", ".pytest_cache", ".ruff_cache"}
     for path in ROOT.rglob("*"):
         if not path.is_file() or ".git" in path.parts or path == SELF:
             continue
-        if any(part in {".venv", "__pycache__", ".pytest_cache", ".ruff_cache"} for part in path.parts):
+        if any(part in ignored_parts for part in path.parts):
             continue
         files.append(path)
     return files
@@ -62,7 +63,9 @@ def main() -> int:
         lowered = text.lower()
         for fragment in FORBIDDEN_TEXT:
             if fragment.lower() in lowered:
-                raise SystemExit(f"forbidden projection content in {relative}: {fragment}")
+                raise SystemExit(
+                    f"forbidden projection content in {relative}: {fragment}"
+                )
         if HEX40.search(text):
             raise SystemExit(f"commit/tree-shaped identifier present in {relative}")
         if PROJECT_COORDINATE.search(text):

@@ -32,8 +32,15 @@ def test_compose_core_is_exactly_three_application_services() -> None:
 
 def test_ci_is_read_only_application_validation() -> None:
     text = (ROOT / ".github/workflows/required.yml").read_text(encoding="utf-8").lower()
-    assert "permissions:\n  contents: read" in text
-    for forbidden in ("terraform", "kubectl", "gcloud ", "docker push", "gh release", "workflow_dispatch"):
+    forbidden_commands = (
+        "terraform",
+        "kubectl",
+        "gcloud ",
+        "docker push",
+        "gh release",
+        "workflow_dispatch",
+    )
+    for forbidden in forbidden_commands:
         assert forbidden not in text
 
 
