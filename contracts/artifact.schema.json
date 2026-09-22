@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edge-evidence.local/contracts/artifact.schema.json",
+  "title": "ArtifactProjection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifact_id", "state", "digest", "created_at", "source", "snapshot_eligible", "labels"],
+  "properties": {
+    "artifact_id": {"type": "string", "pattern": "^art_[a-z0-9]{8,64}$"},
+    "state": {"enum": ["prepared", "processing", "complete", "deferred", "failed"]},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "source": {"const": "synthetic"},
+    "snapshot_eligible": {"type": "boolean"},
+    "labels": {"type": "object", "additionalProperties": {"type": "string"}}
+  }
+}

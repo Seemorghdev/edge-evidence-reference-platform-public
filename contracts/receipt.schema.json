@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edge-evidence.local/contracts/receipt.schema.json",
+  "title": "EvidenceReceipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["receipt_id", "artifact_id", "status", "issued_at", "processor", "replication", "provenance"],
+  "properties": {
+    "receipt_id": {"type": "string", "pattern": "^rcpt_[a-z0-9]{8,64}$"},
+    "artifact_id": {"type": "string", "pattern": "^art_[a-z0-9]{8,64}$"},
+    "status": {"type": "string"},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "processor": {"$ref": "#/$defs/processor"},
+    "replication": {"$ref": "#/$defs/replication"},
+    "provenance": {"type": "object", "additionalProperties": {"type": "string"}}
+  },
+  "$defs": {
+    "processor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "already_complete", "prepared_resumed", "newly_completed", "deferred", "remaining"],
+      "properties": {
+        "status": {"type": "string"},
+        "already_complete": {"type": "integer", "minimum": 0},
+        "prepared_resumed": {"type": "integer", "minimum": 0},
+        "newly_completed": {"type": "integer", "minimum": 0},
+        "deferred": {"type": "integer", "minimum": 0},
+        "remaining": {"type": "integer", "minimum": 0}
+      }
+    },
+    "replication": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "created", "adopted_exact", "verified", "collisions_refused"],
+      "properties": {
+        "status": {"type": "string"},
+        "created": {"type": "integer", "minimum": 0},
+        "adopted_exact": {"type": "integer", "minimum": 0},
+        "verified": {"type": "integer", "minimum": 0},
+        "collisions_refused": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}
