@@ -15,9 +15,11 @@ def test_gateway_serves_ui_and_same_origin_service_routes() -> None:
     assert "Live Processor + Replication proof (JSON/API)" in page.text
     assert "Processor engineering repository" in page.text
     assert "Replication projection repository" in page.text
+    assert "Reference Platform UI and gateway repository" in page.text
     assert "https://seemorgh-evidence-showcase-45655632eff2.herokuapp.com/api/demo" in page.text
     assert "https://github.com/Seemorghdev/edge-evidence-processor-public" in page.text
     assert "https://github.com/Seemorghdev/edge-evidence-replication-projection" in page.text
+    assert "https://github.com/Seemorghdev/edge-evidence-reference-platform-public" in page.text
 
     artifacts = client.get("/api/v1/artifacts")
     assert artifacts.status_code == 200

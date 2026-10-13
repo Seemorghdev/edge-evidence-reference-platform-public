@@ -24,6 +24,23 @@ FORBIDDEN_TEXT = (
     "/issues/",
     "/pull/",
 )
+# Recruiter navigation is intentionally limited to these exact public repositories.
+# The strings are exempted from the owner-repository text rule only in the UI template
+# and its focused gateway test; every URL variant and all other forbidden-content rules
+# remain enforced everywhere.
+APPROVED_PUBLIC_REPOSITORY_LINKS = {
+    "services/web-ui/src/edge_evidence_web_ui/templates/index.html": {
+        "https://github.com/Seemorghdev/edge-evidence-processor-public",
+        "https://github.com/Seemorghdev/edge-evidence-replication-projection",
+        "https://github.com/Seemorghdev/edge-evidence-reference-platform-public",
+    },
+    "tests/test_gateway.py": {
+        "https://github.com/Seemorghdev/edge-evidence-processor-public",
+        "https://github.com/Seemorghdev/edge-evidence-replication-projection",
+        "https://github.com/Seemorghdev/edge-evidence-reference-platform-public",
+    },
+}
+GITHUB_REPOSITORY_URL = re.compile(r"https?://github\.com/[^\s\"'<>]+", re.IGNORECASE)
 HEX40 = re.compile(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])", re.IGNORECASE)
 PROJECT_COORDINATE = re.compile(r"\bproject-[a-z0-9-]{8,}\b", re.IGNORECASE)
 
@@ -38,6 +55,28 @@ def iter_text_files() -> list[Path]:
             continue
         files.append(path)
     return files
+
+
+def validate_text(relative: str, text: str) -> None:
+    """Validate one projection file, narrowly permitting recruiter repository links."""
+    approved_links = APPROVED_PUBLIC_REPOSITORY_LINKS.get(relative, set())
+    repository_urls = GITHUB_REPOSITORY_URL.findall(text)
+    unexpected_urls = [url for url in repository_urls if url not in approved_links]
+    if unexpected_urls:
+        raise ValueError(f"unapproved GitHub repository URL in {relative}")
+
+    scanned_text = text
+    for approved_url in repository_urls:
+        scanned_text = scanned_text.replace(approved_url, "", 1)
+
+    lowered = scanned_text.lower()
+    for fragment in FORBIDDEN_TEXT:
+        if fragment.lower() in lowered:
+            raise ValueError(f"forbidden projection content in {relative}: {fragment}")
+    if HEX40.search(scanned_text):
+        raise ValueError(f"commit/tree-shaped identifier present in {relative}")
+    if PROJECT_COORDINATE.search(scanned_text):
+        raise ValueError(f"project coordinate present in {relative}")
 
 
 def main() -> int:
@@ -60,16 +99,10 @@ def main() -> int:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
-        lowered = text.lower()
-        for fragment in FORBIDDEN_TEXT:
-            if fragment.lower() in lowered:
-                raise SystemExit(
-                    f"forbidden projection content in {relative}: {fragment}"
-                )
-        if HEX40.search(text):
-            raise SystemExit(f"commit/tree-shaped identifier present in {relative}")
-        if PROJECT_COORDINATE.search(text):
-            raise SystemExit(f"project coordinate present in {relative}")
+        try:
+            validate_text(relative, text)
+        except ValueError as error:
+            raise SystemExit(str(error)) from error
 
     print("projection boundary intact")
     return 0

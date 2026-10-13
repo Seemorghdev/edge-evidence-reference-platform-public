@@ -10,3 +10,9 @@ The application is intentionally useful without becoming authoritative.
 - Repository CI performs only read/build/test validation and contains no deployment or provider mutation step.
 
 The boundary is enforced by application tests and by `scripts/check_projection.py`.
+
+The recruiter page may link to three explicitly approved public engineering repositories so
+visitors can follow the demo into its supporting code. The projection guard permits those
+exact repository URLs only in the recruiter UI template and its focused test. It rejects
+other repository links, URL variants, private-source identifiers, and operational details;
+the rest of the projection checks are unchanged.
