@@ -3,82 +3,180 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Edge Evidence Reference Platform</title>
+  <meta name="description" content="A simple tour of three synthetic evidence scenarios.">
+  <link rel="icon" href="data:,">
+  <title>Edge Evidence | A safe, synthetic demo</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <main>
-    <header>
-      <p class="eyebrow">Synthetic recruiter demo</p>
-      <h1>Edge Evidence — Live Demo</h1>
-      <p>Explore a deterministic evidence workflow with artifact state, bounded inspection, and explicit authority boundaries.</p>
-      <p class="demo-hint"><strong>Try it:</strong> choose the <strong>complete</strong> artifact and click <strong>Inspect</strong>.</p>
+    <header class="hero">
+      <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> A guided engineering demo</p>
+      <h1>Three examples.<br><span>One safe workflow.</span></h1>
+      <p class="intro"><strong>Edge Evidence is an engineering experiment in preserving evidence, processing it reliably, and verifying that copies match.</strong> This page is a read-only inspection of synthetic example states. It does not run the complete processing or replication workflow.</p>
+      <div class="notice" role="note">
+        <span class="notice-icon" aria-hidden="true">i</span>
+        <p><strong>Everything here is synthetic.</strong> Browse three example states and ask what each one means. This page cannot start or restart work, change records, or verify a live copy.</p>
+      </div>
     </header>
-    <section class="controls">
-      <button id="refresh">Refresh artifacts</button>
-      <span id="status">Ready</span>
+
+    <section class="demo" aria-labelledby="demo-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">THE WALKTHROUGH</p>
+          <h2 id="demo-title">Choose an example to explore</h2>
+          <p class="section-copy">Each card shows a different point in a simple processing journey.</p>
+        </div>
+        <button id="refresh" class="refresh-button" type="button"><span aria-hidden="true">↻</span> Reload examples</button>
+      </div>
+
+      <div id="status" class="status" role="status" aria-live="polite">Loading the three examples…</div>
+      <section id="artifacts" class="grid" aria-label="Synthetic examples" aria-live="polite"></section>
     </section>
-    <section id="artifacts" class="grid" aria-live="polite"></section>
+
+    <nav class="resources" aria-labelledby="resources-title">
+      <div>
+        <p class="section-kicker">GO DEEPER</p>
+        <h2 id="resources-title">Follow the engineering evidence</h2>
+        <p class="section-copy">These links lead to the separate API proof and public code behind the experiment.</p>
+      </div>
+      <ul class="resource-links">
+        <li><a href="https://seemorgh-evidence-showcase-45655632eff2.herokuapp.com/api/demo" target="_blank" rel="noopener noreferrer">Live Processor + Replication proof (JSON/API)</a><span>A synthetic execution result in JSON, not a visual interface.</span></li>
+        <li><a href="https://github.com/Seemorghdev/edge-evidence-processor-public" target="_blank" rel="noopener noreferrer">Processor engineering repository</a></li>
+        <li><a href="https://github.com/Seemorghdev/edge-evidence-replication-projection" target="_blank" rel="noopener noreferrer">Replication projection repository</a></li>
+        <li><a href="https://github.com/Seemorghdev/edge-evidence-reference-platform-public" target="_blank" rel="noopener noreferrer">Reference Platform UI and gateway repository</a></li>
+      </ul>
+    </nav>
+
+    <footer>
+      <p><strong>Designed to explain, not to act.</strong> This page inspects fixed synthetic examples. It does not perform the live Processor + Replication proof linked above.</p>
+      <span class="footer-mark">EDGE EVIDENCE <span aria-hidden="true">·</span> SYNTHETIC DEMO</span>
+    </footer>
   </main>
   <script>
     const evidenceApi = {{ evidence_api_url | tojson }};
     const edgeAgent = {{ edge_agent_url | tojson }};
     const statusEl = document.getElementById('status');
     const artifactsEl = document.getElementById('artifacts');
-
-    async function inspect(artifact, target) {
-      target.textContent = 'Inspecting…';
-      const response = await fetch(`${edgeAgent}/api/v1/inspect`, {
-        method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(artifact)
-      });
-      if (!response.ok) {
-        throw new Error(`inspection request failed (${response.status})`);
+    const scenarioCopy = {
+      complete: {
+        title: 'Completed successfully',
+        summary: 'This example finished successfully. You can review it without changing anything.',
+        badge: 'Complete',
+        tone: 'complete'
+      },
+      deferred: {
+        title: 'Waiting for a later step',
+        summary: 'This example is waiting. The system can explain why, but cannot restart it.',
+        badge: 'Deferred',
+        tone: 'deferred'
+      },
+      prepared: {
+        title: 'Prepared, not finished',
+        summary: 'This example is set up, but has not finished processing.',
+        badge: 'Prepared',
+        tone: 'prepared'
       }
-      const result = await response.json();
-      target.textContent = `${result.classification}: ${result.explanation}`;
-    }
+    };
 
-    function appendTextElement(parent, tagName, text, className) {
-      const element = document.createElement(tagName);
+    function addText(parent, tag, text, className) {
+      const element = document.createElement(tag);
       element.textContent = text;
       if (className) element.className = className;
       parent.appendChild(element);
       return element;
     }
 
+    async function inspect(artifact, resultBox, button) {
+      resultBox.className = 'result result-pending';
+      resultBox.textContent = 'Getting an explanation…';
+      button.disabled = true;
+      try {
+        const response = await fetch(`${edgeAgent}/api/v1/inspect`, {
+          method: 'POST',
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify(artifact)
+        });
+        if (!response.ok) throw new Error(`inspection request failed (${response.status})`);
+        const result = await response.json();
+        resultBox.className = 'result result-success';
+        resultBox.replaceChildren();
+        addText(resultBox, 'span', 'What this means', 'result-label');
+        addText(resultBox, 'p', result.explanation, 'result-copy');
+      } catch (error) {
+        resultBox.className = 'result result-error';
+        resultBox.textContent = 'The explanation is temporarily unavailable. No work was started or changed.';
+        console.error('Read-only inspection request failed', error);
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function render(artifact) {
+      const scenario = scenarioCopy[artifact.state] || {
+        title: 'Needs a closer look',
+        summary: 'This example does not match one of the three walkthrough states.',
+        badge: 'Review',
+        tone: 'unknown'
+      };
+      const card = document.createElement('article');
+      card.className = `card card-${scenario.tone}`;
+      const top = document.createElement('div');
+      top.className = 'card-topline';
+      addText(top, 'span', scenario.badge, `badge badge-${scenario.tone}`);
+      addText(top, 'span', 'Synthetic example', 'card-kind');
+      card.appendChild(top);
+      addText(card, 'h3', scenario.title, 'card-title');
+      addText(card, 'p', scenario.summary, 'card-summary');
+      const result = document.createElement('div');
+      result.className = 'result result-idle';
+      result.setAttribute('aria-live', 'polite');
+      addText(result, 'span', 'Optional next step', 'result-label');
+      addText(result, 'p', 'Ask what this example means in plain English.', 'result-copy');
+      card.appendChild(result);
+      const actions = document.createElement('div');
+      actions.className = 'card-actions';
+      const button = addText(actions, 'button', 'Explain this example', 'inspect-button');
+      button.type = 'button';
+      button.addEventListener('click', () => inspect(artifact, result, button));
+      card.appendChild(actions);
+
+      const details = document.createElement('details');
+      details.className = 'technical-details';
+      const summary = addText(details, 'summary', 'Technical details');
+      summary.setAttribute('aria-label', `Show technical identifiers for ${scenario.title}`);
+      const identifiers = document.createElement('dl');
+      identifiers.className = 'identifier-list';
+      addText(identifiers, 'dt', 'Example ID');
+      addText(identifiers, 'dd', artifact.artifact_id);
+      addText(identifiers, 'dt', 'Content fingerprint');
+      addText(identifiers, 'dd', artifact.digest);
+      details.appendChild(identifiers);
+      card.appendChild(details);
+      artifactsEl.appendChild(card);
+    }
+
     async function load() {
-      statusEl.textContent = 'Loading…';
+      statusEl.textContent = 'Loading the three examples…';
+      statusEl.className = 'status';
       artifactsEl.replaceChildren();
       try {
         const response = await fetch(`${evidenceApi}/api/v1/artifacts`);
-        if (!response.ok) {
-          throw new Error(`artifact request failed (${response.status})`);
-        }
+        if (!response.ok) throw new Error(`example request failed (${response.status})`);
         const artifacts = await response.json();
-        if (!Array.isArray(artifacts)) {
-          throw new Error('artifact response was not a list');
+        if (!Array.isArray(artifacts) || artifacts.length !== 3) {
+          throw new Error('the expected three examples were not returned');
         }
-        for (const artifact of artifacts) {
-          const card = document.createElement('article');
-          appendTextElement(card, 'h2', artifact.artifact_id);
-          appendTextElement(card, 'p', artifact.state, 'state');
-          appendTextElement(card, 'code', artifact.digest);
-          const inspection = appendTextElement(card, 'p', 'Not inspected', 'inspection');
-          const button = appendTextElement(card, 'button', 'Inspect');
-          button.addEventListener('click', async () => {
-            try {
-              await inspect(artifact, inspection);
-            } catch (error) {
-              inspection.textContent = `Unavailable: ${error}`;
-            }
-          });
-          artifactsEl.appendChild(card);
-        }
-        statusEl.textContent = `${artifacts.length} synthetic artifacts`;
+        artifacts.forEach(render);
+        statusEl.textContent = 'All 3 synthetic examples are ready.';
+        statusEl.className = 'status status-ready';
       } catch (error) {
-        statusEl.textContent = `Unavailable: ${error}`;
+        statusEl.textContent = 'The examples could not be loaded. Please try again in a moment.';
+        statusEl.className = 'status status-error';
+        console.error('Synthetic examples could not be loaded', error);
       }
     }
+
     document.getElementById('refresh').addEventListener('click', load);
     load();
   </script>
