@@ -92,6 +92,40 @@ def test_gateway_container_ci_builds_and_runs_without_publishing() -> None:
     assert "container-browser:" in text
 
 
+def test_gateway_container_browser_mode_is_event_specific() -> None:
+    workflow = yaml.safe_load(
+        (ROOT / ".github/workflows/gateway-container.yml").read_text(
+            encoding="utf-8"
+        )
+    )
+    steps = workflow["jobs"]["container-browser"]["steps"]
+    baseline_checkout = next(
+        step for step in steps if step.get("with", {}).get("path") == "baseline"
+    )
+    baseline_steps = [
+        step
+        for step in steps
+        if step.get("name") in {
+            "Install baseline services for before screenshot",
+            "Start the three-service baseline",
+        }
+    ]
+    browser_step = next(
+        step
+        for step in steps
+        if step.get("name") == "Browser journey against baseline and container"
+    )
+    browser_script = (ROOT / "tests/browser_gateway_smoke.py").read_text(encoding="utf-8")
+
+    assert baseline_checkout["if"] == "github.event_name == 'pull_request'"
+    assert all(step["if"] == "github.event_name == 'pull_request'" for step in baseline_steps)
+    assert browser_step["env"]["COMPARE_BASELINE"] == "${{ github.event_name == 'pull_request' }}"
+    assert "if compare_baseline:" in browser_script
+    assert 'name="Three examples. One safe workflow."' in browser_script
+    assert 'inner_text() == "All 3 synthetic examples are ready."' in browser_script
+    assert "exercise_gateway(" in browser_script
+
+
 def test_generic_kubernetes_intent_contains_no_public_exposure_resource() -> None:
     rendered = "\n".join(
         path.read_text(encoding="utf-8")

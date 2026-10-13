@@ -1,4 +1,4 @@
-"""Exercise the baseline UI and container gateway in a real headless browser."""
+"""Exercise the PR-base UI and container gateway in a real headless browser."""
 
 from __future__ import annotations
 
@@ -34,12 +34,12 @@ def observe_browser(page: Page) -> tuple[list[str], list[str], list[str]]:
 def exercise_baseline(page: Page, url: str, *, screenshot_prefix: str) -> None:
     console_errors, failed_requests, bad_responses = observe_browser(page)
     page.goto(url, wait_until="networkidle", timeout=30_000)
-    page.get_by_role("heading", name="Edge Evidence — Live Demo").wait_for()
+    page.get_by_role("heading", name="Three examples. One safe workflow.").wait_for()
     cards = page.locator("#artifacts article")
     assert cards.count() == 3, f"expected 3 baseline cards; found {cards.count()}"
-    assert "3 synthetic artifacts" in page.locator("#status").inner_text()
+    assert page.locator("#status").inner_text() == "All 3 synthetic examples are ready."
     page.screenshot(path=f"{screenshot_prefix}-before.png", full_page=True)
-    cards.nth(0).get_by_role("button", name="Inspect").click()
+    cards.nth(0).get_by_role("button", name="Explain this example").click()
     page.wait_for_function(
         "document.querySelector('#artifacts article .inspection')?.innerText !== 'Not inspected'"
     )
@@ -74,23 +74,26 @@ def exercise_gateway(page: Page, url: str, *, screenshot_prefix: str) -> None:
 
 
 def main() -> None:
-    base_url = os.environ["BASELINE_URL"]
     gateway_url = os.environ["GATEWAY_URL"]
+    compare_baseline = os.environ.get("COMPARE_BASELINE", "true").lower() == "true"
     screenshot_dir = Path(os.environ.get("SCREENSHOT_DIR", "screenshots"))
     screenshot_dir.mkdir(parents=True, exist_ok=True)
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         try:
-            exercise_baseline(
-                browser.new_page(),
-                base_url,
-                screenshot_prefix=str(screenshot_dir / "before"),
-            )
+            screenshot_prefix = "current"
+            if compare_baseline:
+                exercise_baseline(
+                    browser.new_page(),
+                    os.environ["BASELINE_URL"],
+                    screenshot_prefix=str(screenshot_dir / "before"),
+                )
+                screenshot_prefix = "after"
             exercise_gateway(
                 browser.new_page(),
                 gateway_url,
-                screenshot_prefix=str(screenshot_dir / "after"),
+                screenshot_prefix=str(screenshot_dir / screenshot_prefix),
             )
         finally:
             browser.close()

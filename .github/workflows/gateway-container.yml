@@ -22,15 +22,18 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
+      - name: Checkout PR base for before/after comparison
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          ref: ${{ github.event.pull_request.base.sha }}
           path: baseline
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
       - name: Install baseline services for before screenshot
+        if: github.event_name == 'pull_request'
         run: |
           python -m venv baseline/.venv
           baseline/.venv/bin/pip install --disable-pip-version-check \
@@ -39,6 +42,7 @@ jobs:
             -e baseline/services/edge-agent \
             -e baseline/services/web-ui
       - name: Start the three-service baseline
+        if: github.event_name == 'pull_request'
         env:
           ALLOWED_ORIGINS: http://127.0.0.1:18082
           EDGE_AGENT_ENABLE_ADK: "0"
@@ -96,6 +100,7 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Browser journey against baseline and container
         env:
+          COMPARE_BASELINE: ${{ github.event_name == 'pull_request' }}
           BASELINE_URL: http://127.0.0.1:18082
           GATEWAY_URL: http://127.0.0.1:18083
           SCREENSHOT_DIR: ${{ runner.temp }}/gateway-screenshots
@@ -104,7 +109,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: recruiter-demo-before-after
+          name: recruiter-demo-${{ github.event_name }}
           path: ${{ runner.temp }}/gateway-screenshots/*.png
           if-no-files-found: ignore
           retention-days: 14
