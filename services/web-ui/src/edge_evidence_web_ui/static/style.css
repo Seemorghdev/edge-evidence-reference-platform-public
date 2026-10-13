@@ -31,6 +31,13 @@ h1 span { color: var(--green); }
 .text-link { display: inline-flex; gap: 7px; margin-top: 21px; color: var(--green); text-decoration: none; font-weight: 700; font-size: .93rem; }
 .text-link:hover { color: var(--green-dark); text-decoration: underline; }
 .demo { padding: 42px 0 72px; border-top: 1px solid var(--line); }
+.resources { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(0, 1.2fr); gap: 30px; padding: 30px 0 42px; border-top: 1px solid var(--line); }
+.resources h2 { font-size: clamp(1.35rem, 2.5vw, 1.8rem); }
+.resource-links { display: grid; gap: 13px; margin: 0; padding: 0; list-style: none; }
+.resource-links li { display: grid; gap: 4px; }
+.resource-links a { width: fit-content; color: var(--green); font-weight: 700; text-decoration: none; }
+.resource-links a:hover { color: var(--green-dark); text-decoration: underline; }
+.resource-links span { color: var(--muted); font-size: .84rem; line-height: 1.5; }
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
 .section-kicker { margin: 0 0 8px; color: #7b8984; }
 h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.1rem); letter-spacing: -.035em; }
@@ -79,6 +86,7 @@ footer strong { color: #4d5c55; }
 
 @media (max-width: 800px) {
   .grid { grid-template-columns: 1fr; }
+  .resources { grid-template-columns: 1fr; gap: 18px; }
   .card-title, .card-summary { min-height: 0; }
   .card { padding: 20px; }
 }
