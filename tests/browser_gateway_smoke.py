@@ -74,23 +74,26 @@ def exercise_gateway(page: Page, url: str, *, screenshot_prefix: str) -> None:
 
 
 def main() -> None:
-    base_url = os.environ["BASELINE_URL"]
     gateway_url = os.environ["GATEWAY_URL"]
+    compare_baseline = os.environ.get("COMPARE_BASELINE", "true").lower() == "true"
     screenshot_dir = Path(os.environ.get("SCREENSHOT_DIR", "screenshots"))
     screenshot_dir.mkdir(parents=True, exist_ok=True)
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         try:
-            exercise_baseline(
-                browser.new_page(),
-                base_url,
-                screenshot_prefix=str(screenshot_dir / "before"),
-            )
+            screenshot_prefix = "current"
+            if compare_baseline:
+                exercise_baseline(
+                    browser.new_page(),
+                    os.environ["BASELINE_URL"],
+                    screenshot_prefix=str(screenshot_dir / "before"),
+                )
+                screenshot_prefix = "after"
             exercise_gateway(
                 browser.new_page(),
                 gateway_url,
-                screenshot_prefix=str(screenshot_dir / "after"),
+                screenshot_prefix=str(screenshot_dir / screenshot_prefix),
             )
         finally:
             browser.close()
