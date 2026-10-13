@@ -121,6 +121,7 @@ def test_gateway_container_browser_mode_is_event_specific() -> None:
     assert all(step["if"] == "github.event_name == 'pull_request'" for step in baseline_steps)
     assert browser_step["env"]["COMPARE_BASELINE"] == "${{ github.event_name == 'pull_request' }}"
     assert "if compare_baseline:" in browser_script
+    assert 'name="Three examples. One safe workflow."' in browser_script
     assert "exercise_gateway(" in browser_script
 
 
