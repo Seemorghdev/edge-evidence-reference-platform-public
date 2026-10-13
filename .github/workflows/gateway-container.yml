@@ -1,0 +1,110 @@
+name: gateway-container
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/gateway-container.yml"
+      - "packages/**"
+      - "services/**"
+      - "tests/**"
+  push:
+    branches: [main]
+permissions:
+  contents: read
+
+concurrency:
+  group: gateway-container-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  container-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          path: baseline
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install baseline services for before screenshot
+        run: |
+          python -m venv baseline/.venv
+          baseline/.venv/bin/pip install --disable-pip-version-check \
+            -e baseline/packages/shared-contracts \
+            -e baseline/services/evidence-api \
+            -e baseline/services/edge-agent \
+            -e baseline/services/web-ui
+      - name: Start the three-service baseline
+        env:
+          ALLOWED_ORIGINS: http://127.0.0.1:18082
+          EDGE_AGENT_ENABLE_ADK: "0"
+        run: |
+          baseline/.venv/bin/uvicorn edge_evidence_evidence_api.app:app --app-dir baseline/services/evidence-api/src --host 127.0.0.1 --port 18080 > /tmp/baseline-api.log 2>&1 &
+          baseline/.venv/bin/uvicorn edge_evidence_edge_agent.app:app --app-dir baseline/services/edge-agent/src --host 127.0.0.1 --port 18081 > /tmp/baseline-agent.log 2>&1 &
+          EVIDENCE_API_URL=http://127.0.0.1:18080 EDGE_AGENT_URL=http://127.0.0.1:18081 \
+            baseline/.venv/bin/uvicorn edge_evidence_web_ui.app:app --app-dir baseline/services/web-ui/src --host 127.0.0.1 --port 18082 > /tmp/baseline-ui.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:18082/healthz >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/baseline-api.log /tmp/baseline-agent.log /tmp/baseline-ui.log
+          exit 1
+      - name: Build Linux gateway image without publishing
+        run: docker build --platform linux/amd64 --provenance=false --sbom=false -f services/web-ui/Dockerfile.gateway -t edge-evidence-gateway:test .
+      - name: Start image with a platform-assigned PORT
+        run: |
+          docker run -d --name gateway -e PORT=18083 -p 127.0.0.1:18083:18083 edge-evidence-gateway:test
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:18083/healthz >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          docker logs gateway
+          exit 1
+      - name: Verify container HTTP and safety contract
+        run: |
+          curl --fail --silent http://127.0.0.1:18083/healthz | python -c 'import json,sys; assert json.load(sys.stdin)["status"] == "ok"'
+          curl --fail --silent http://127.0.0.1:18083/readyz | python -c 'import json,sys; assert json.load(sys.stdin)["authority"] == "synthetic-only"'
+          curl --fail --silent http://127.0.0.1:18083/api/v1/artifacts > /tmp/artifacts.json
+          python - <<'PY'
+          import json
+          from urllib.request import Request, urlopen
+          artifacts = json.load(open('/tmp/artifacts.json'))
+          assert len(artifacts) == 3
+          for artifact in artifacts:
+              request = Request('http://127.0.0.1:18083/api/v1/inspect', data=json.dumps(artifact).encode(), headers={'Content-Type': 'application/json'}, method='POST')
+              with urlopen(request) as response:
+                  result = json.load(response)
+              assert result['artifact_id'] == artifact['artifact_id']
+              assert result['mutation_authorized'] is False
+              assert result['explanation'].strip()
+          request = Request('http://127.0.0.1:18083/api/v1/demo/reset', data=b'{}', headers={'Content-Type': 'application/json'}, method='POST')
+          try:
+              urlopen(request)
+          except Exception as error:
+              assert getattr(error, 'code', None) == 404
+          else:
+              raise AssertionError('demo reset unexpectedly exposed')
+          PY
+          docker stats --no-stream --format 'container_memory={{.MemUsage}}' gateway
+      - name: Install headless browser test tooling
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Browser journey against baseline and container
+        env:
+          BASELINE_URL: http://127.0.0.1:18082
+          GATEWAY_URL: http://127.0.0.1:18083
+          SCREENSHOT_DIR: ${{ runner.temp }}/gateway-screenshots
+        run: python tests/browser_gateway_smoke.py
+      - name: Upload comparison screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: recruiter-demo-before-after
+          path: ${{ runner.temp }}/gateway-screenshots/*.png
+          if-no-files-found: ignore
+          retention-days: 14

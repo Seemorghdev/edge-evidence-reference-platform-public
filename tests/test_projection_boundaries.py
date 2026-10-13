@@ -44,6 +44,17 @@ def test_ci_is_read_only_application_validation() -> None:
         assert forbidden not in text
 
 
+def test_gateway_container_ci_builds_and_runs_without_publishing() -> None:
+    text = (ROOT / ".github/workflows/gateway-container.yml").read_text(
+        encoding="utf-8"
+    ).lower()
+    assert "docker build" in text
+    assert "docker run" in text
+    assert "docker push" not in text
+    assert "docker login" not in text
+    assert "container-browser:" in text
+
+
 def test_generic_kubernetes_intent_contains_no_public_exposure_resource() -> None:
     rendered = "\n".join(
         path.read_text(encoding="utf-8")

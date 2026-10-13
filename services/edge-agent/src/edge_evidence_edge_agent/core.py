@@ -11,7 +11,7 @@ def inspect_artifact(artifact: ArtifactProjection) -> AgentInspection:
             artifact_id=artifact.artifact_id,
             classification="healthy-complete",
             explanation=(
-                "The synthetic projection is complete and eligible for snapshot inspection."
+                "This example finished successfully. You can review it without changing anything."
             ),
         )
     if artifact.state is ArtifactState.DEFERRED:
@@ -19,8 +19,8 @@ def inspect_artifact(artifact: ArtifactProjection) -> AgentInspection:
             artifact_id=artifact.artifact_id,
             classification="bounded-defer",
             explanation=(
-                "The component contract reports deferred work. The agent can explain the state "
-                "but cannot execute a worker or mutate authority."
+                "This example is waiting. I can explain why, but I cannot restart it or change "
+                "anything."
             ),
             proposal={
                 "action": "review-component-summary",
@@ -33,7 +33,9 @@ def inspect_artifact(artifact: ArtifactProjection) -> AgentInspection:
         return AgentInspection(
             artifact_id=artifact.artifact_id,
             classification="prepared-awaiting-catch-up",
-            explanation="A prepared synthetic artifact has not yet reached a completed projection.",
+            explanation=(
+                "This example is set up, but has not finished processing."
+            ),
             proposal={"action": "inspect-worker-readiness", "execution": "read-only"},
             requires_human_approval=True,
         )
@@ -41,7 +43,7 @@ def inspect_artifact(artifact: ArtifactProjection) -> AgentInspection:
         artifact_id=artifact.artifact_id,
         classification="attention-required",
         explanation=(
-            "The projection is not complete. Inspect stable component output before action."
+            "This example is not finished. Review its saved result before taking action."
         ),
         proposal={"action": "collect-public-summary", "execution": "read-only"},
         requires_human_approval=True,

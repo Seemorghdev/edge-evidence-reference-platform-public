@@ -48,7 +48,7 @@ def main() -> int:
 
     workflow_dir = ROOT / ".github" / "workflows"
     workflows = sorted(path.name for path in workflow_dir.glob("*.y*ml"))
-    if workflows != ["required.yml"]:
+    if workflows != ["gateway-container.yml", "required.yml"]:
         raise SystemExit(f"unexpected workflow set: {workflows}")
 
     for path in iter_text_files():
