@@ -37,7 +37,7 @@ def exercise_baseline(page: Page, url: str, *, screenshot_prefix: str) -> None:
     page.get_by_role("heading", name="Three examples. One safe workflow.").wait_for()
     cards = page.locator("#artifacts article")
     assert cards.count() == 3, f"expected 3 baseline cards; found {cards.count()}"
-    assert "3 synthetic artifacts" in page.locator("#status").inner_text()
+    assert page.locator("#status").inner_text() == "All 3 synthetic examples are ready."
     page.screenshot(path=f"{screenshot_prefix}-before.png", full_page=True)
     cards.nth(0).get_by_role("button", name="Inspect").click()
     page.wait_for_function(
