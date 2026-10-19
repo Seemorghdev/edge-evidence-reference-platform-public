@@ -4,6 +4,10 @@ A history-free, recruiter-facing application projection for evidence-first syste
 
 The product demonstrates a strict authority split: deterministic workers own evidence and state outside this runtime; the **Evidence API** exposes disposable synthetic projections; the **Edge Agent** performs bounded read-only inspection; and the **Web UI** presents the journey without gaining mutation authority.
 
+## Public reviewer entry points
+
+Try the [live Visual Gateway](https://edge-evidence-visual-gateway-2e3eaeb86f95.herokuapp.com/) to inspect three deterministic synthetic example states, read the [Mehridian case study](https://mehridian.tech/projects/edge-evidence) for the project overview, or explore the [Edge Evidence technical Docs](https://docs.mehridian.tech/edge-evidence/) for setup, contracts, and engineering boundaries. The hosted Gateway is read-only; it does not execute the separate processing and replication workflow.
+
 ## Three-service product story
 
 | Service | Responsibility | Authority boundary |
