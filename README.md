@@ -13,8 +13,8 @@ Try the [live Visual Gateway](https://edge-evidence-visual-gateway-2e3eaeb86f95.
 The revised [model-free Gateway](services/web-ui/HOSTED-WORKBENCH.md) brings together
 **Inspect**, a separate **retained Proof**, and an **Ask** view explaining how to run
 [the optional local Llama workbench](examples/local-llama-workbench/README.md).
-Gateway source in this branch is a review candidate, not a claim that the live app
-has been updated. The hosted app never calls a reviewer’s computer or runs inference.
+The hosted interface is model-free: it never calls a reviewer’s computer or runs
+inference. Application deployment is separate from obtaining this source.
 
 Original code and synthetic assets are Apache-2.0. Model weights are obtained
 separately under their own terms; dependency/upstream notices are preserved.
