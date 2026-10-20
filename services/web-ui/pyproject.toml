@@ -26,3 +26,4 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 edge_evidence_web_ui = ["static/*.css", "templates/*.html"]
+"edge_evidence_web_ui.workbench" = ["index.html", "*.json", "static/*.css", "static/*.js"]

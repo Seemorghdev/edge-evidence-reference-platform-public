@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light"><title>Edge Evidence · Local investigation workspace</title>
+<link rel="stylesheet" href="/styles.css"><script defer src="/app.js"></script><script defer src="/proof.js"></script>
+</head><body>
+<div class="workspace" data-section="scenarios">
+  <header class="topbar">
+    <div class="identity"><span class="brand-icon" aria-hidden="true">E<span>·</span></span><div><span class="eyebrow">LOCAL · READ-ONLY WORKBENCH</span><h1>Edge Evidence <span>Workbench</span></h1></div></div>
+    <div class="top-meta"><span class="top-chip" id="model-readiness" role="status" aria-live="polite">Model · checking</span><button id="prepare-model" class="quiet-button" type="button">Prepare model</button><span class="model-name">Local <strong>Llama 8B</strong></span></div>
+  </header>
+  <div id="mock-banner" class="mock-banner" role="status" hidden>TEST-ONLY MODE — MOCKED TRANSPORT. NO LIVE OLLAMA INFERENCE.</div>
+  <div class="turn-ribbon" id="turn-ribbon" role="status" aria-live="polite" hidden><span id="active-turn-message">A question is active · view navigation does not cancel inference.</span><button id="cancel-global" class="cancel-button" type="button">Cancel active turn</button></div>
+  <div class="workbench">
+  <nav class="mobile-nav" aria-label="Workspace views">
+    <button class="tab active" type="button" data-view="scenarios" aria-label="Inspect a record" aria-controls="scenarios" aria-current="page"><span class="nav-icon" aria-hidden="true">⌕</span><span class="nav-label">Inspect<span class="nav-detail">Record facts</span></span></button>
+    <button class="tab" type="button" data-view="proof" aria-label="Processing and replication proof" aria-controls="proof-view"><span class="nav-icon" aria-hidden="true">⇄</span><span class="nav-label">Proof<span class="nav-detail">Retained result</span></span></button>
+    <button class="tab" type="button" data-view="conversation" aria-label="Ask about a record" aria-controls="conversation"><span class="nav-icon" aria-hidden="true">✳</span><span class="nav-label">Ask<span class="nav-detail">Local model</span></span></button>
+  </nav>
+  <main class="layout">
+    <aside id="scenarios" class="scenarios view active" aria-labelledby="scenario-title">
+      <div class="section-top"><span class="eyebrow">01 / SCENARIOS</span><span class="micro">THREE PINNED RECORDS</span></div>
+      <h2 id="scenario-title">Inspect a record</h2>
+      <p class="aside-lead">Choose one of three independent synthetic fixtures. Its deterministic facts appear alongside.</p>
+      <div class="scenario-list" role="group" aria-label="Choose a synthetic record">
+        <button class="scenario selected" data-fixture="prepared" type="button" aria-pressed="true"><span class="scenario-row"><span class="scenario-title">Prepared, awaiting catch-up</span><span class="scenario-arrow" aria-hidden="true">↗</span></span><span class="scenario-description">Prepared is recorded; downstream completion is not.</span><span class="scenario-foot"><span class="mini-pill">PREPARED</span><span class="synthetic-label">SYNTHETIC</span></span></button>
+        <button class="scenario" data-fixture="deferred" type="button" aria-pressed="false"><span class="scenario-row"><span class="scenario-title">Bounded defer</span><span class="scenario-arrow" aria-hidden="true">↗</span></span><span class="scenario-description">A defer is recorded, not proof of a completed result.</span><span class="scenario-foot"><span class="mini-pill">DEFERRED</span><span class="synthetic-label">SYNTHETIC</span></span></button>
+        <button class="scenario" data-fixture="complete" type="button" aria-pressed="false"><span class="scenario-row"><span class="scenario-title">Recorded complete</span><span class="scenario-arrow" aria-hidden="true">↗</span></span><span class="scenario-description">This record says complete; independent readback is not shown.</span><span class="scenario-foot"><span class="mini-pill">COMPLETE</span><span class="synthetic-label">SYNTHETIC</span></span></button>
+      </div>
+      <button type="button" id="inspect-ask" class="primary-button inspect-next">Ask about selected record →</button>
+      <details class="guide" id="guide" aria-labelledby="guide-title">
+        <summary id="guide-title">Optional guided walkthrough · 3 records</summary>
+        <div class="guide-content">
+        <p>Explore the three recorded states without assuming they are stages of one run.</p>
+        <ol><li><button type="button" data-guide="prepared">Inspect what prepared establishes <span>↗</span></button></li><li><button type="button" data-guide="deferred">Compare with a deferred record <span>↗</span></button></li><li><button type="button" data-guide="complete">Examine the readback limit <span>↗</span></button></li></ol>
+        <p class="guide-note">Try asking about a different artifact to explore a refusal. The model may fail or time out; no answer is preloaded.</p>
+        </div>
+      </details>
+      <div class="aside-footer"><span class="status-dot" aria-hidden="true"></span> Local-only · no uploads or writes</div>
+    </aside>
+
+    <section id="conversation" class="conversation view" aria-labelledby="question-title">
+      <div class="conversation-heading"><div><span class="eyebrow">02 / ASK A QUESTION</span><h2 id="question-title">Ask about this record</h2><p>Each turn is independent. Optional model text is not authoritative; there is no conversation memory.</p></div><button id="clear" class="quiet-button" type="button">Clear workspace</button></div>
+      <details class="orientation" aria-label="How to use this local workspace"><summary>How it works · synthetic, read-only evidence</summary>
+        <p>Select one supplied record, ask one question, then compare any optional model explanation with independent inspector facts. The model cannot process records, authorize writes or verify copies.</p>
+      </details>
+      <div id="selection" class="selection-strip"><span class="eyebrow">CURRENT RECORD</span><strong id="current-label">Prepared, awaiting catch-up</strong><span class="scope-tag">SYNTHETIC</span><button id="switch-record" class="quiet-button" type="button">Change record</button></div>
+      <div id="trail" class="trail" role="log" aria-label="Question and answer trail" aria-live="off"><div id="empty-trail" class="empty-trail"><div class="empty-glyph" aria-hidden="true">◎</div><h3>Start with the evidence.</h3><p>Select a question below. Replies may be wrong or withheld; inspector facts remain separate and available.</p></div></div>
+      <div class="composer-wrap"><div class="composer-header"><label for="question">Ask about <span id="composer-record">prepared</span></label><span id="request-status" role="status" aria-live="polite">Inspector loading…</span></div><textarea id="question" maxlength="2000" rows="2" placeholder="What does this recorded state mean?">What does this recorded state mean?</textarea>
+        <div class="suggestions" aria-label="Suggested questions"><button class="preset" data-question="What does this recorded state mean?" type="button">Explain this state</button><button class="preset" data-question="What is not established by this inspection?" type="button">What are the limits?</button><button class="preset" data-question="Can you verify copies of a different artifact?" type="button">Test a limitation</button></div>
+        <div class="composer-bottom"><span class="composer-help">Ctrl/⌘ + Enter · up to 2,000 characters · one turn at a time</span><div class="composer-actions"><button id="cancel" class="cancel-button" type="button" disabled>Cancel turn</button><button id="ask" class="primary-button" type="button" disabled>Ask question <span aria-hidden="true">↗</span></button></div></div>
+      </div>
+    </section>
+
+    <aside id="inspector" class="inspector view" aria-labelledby="inspector-title">
+      <div class="inspector-header"><div><span class="eyebrow">03 / INSPECTOR FACTS</span><h2 id="inspector-title">Inspector</h2></div><span class="fact-pill">PINNED SOURCE</span></div>
+      <p class="evidence-context-label">Inspector-derived facts · independent of optional model explanations</p><p id="inspector-context" class="inspector-context">Current record facts · selecting an earlier question shows its frozen evidence, not this record.</p>
+      <div id="facts-error" class="warning" role="alert" hidden>Inspector unavailable. No model output can replace the missing facts.</div>
+      <dl class="facts-list"><div><dt>Artifact identity</dt><dd id="fact-identity">—</dd></div><div><dt>Classification</dt><dd id="fact-classification">—</dd></div><div><dt>Human approval required</dt><dd id="fact-approval">—</dd></div><div><dt>Mutation authorized</dt><dd id="fact-mutation">—</dd></div><div><dt>Independent readback</dt><dd id="fact-readback">Not established</dd></div></dl>
+      <details class="evidence-details" id="record-input-details"><summary>Input record and deterministic inspector JSON</summary><p class="activity-caption">Pinned input and real deterministic inspector result are separate; missing evidence does not mean failed verification.</p><h4>Input record</h4><pre class="proof-json" id="record-raw">Loading</pre><h4>Inspector result</h4><pre class="proof-json" id="inspector-raw">Loading</pre></details>
+       <details class="scope-note"><summary>Read-only inspection · verification limits</summary><p><code>requires_human_approval: false</code> is never write permission. No action tools exist. Inspecting one synthetic record does not verify other copies or systems.</p></details>
+      <div class="evidence-divider"><h3>Observed activity</h3><span id="event-count">0 EVENTS</span></div>
+      <p id="activity-summary" class="activity-summary" role="status" aria-live="polite">Inspector facts are available before a model question. No model tool call is implied.</p>
+      <details id="activity-details" class="evidence-details"><summary>Turn event timeline <span aria-hidden="true">⌄</span></summary><p class="activity-caption">Events come from supervisor and worker observations. Times mean “observed at,” not exact operation start. No semantic progress is inferred.</p>
+      <ol id="activity" class="activity"><li class="activity-empty">Select a question in the trail to inspect its own events.</li></ol></details>
+      <details id="technical-activity" class="evidence-details"><summary>Technical boundary events <span id="technical-count">0</span></summary><ol id="technical-list" class="activity"></ol></details>
+      <details id="evidence-details" class="evidence-details"><summary>Record and output details <span aria-hidden="true">⌄</span></summary><div class="detail-inner"><dl class="detail-list"><div><dt>Recorded state</dt><dd id="record-state">—</dd></div><div><dt>Snapshot eligible</dt><dd id="snapshot-eligible">—</dd></div><div><dt>Source / label</dt><dd id="record-source">—</dd></div><div><dt>Created at</dt><dd id="record-created">—</dd></div><div><dt>Digest</dt><dd id="record-digest">—</dd></div><div><dt>Model requests allowed</dt><dd id="request-count">—</dd></div><div><dt>Inspector attempts</dt><dd id="tool-count">—</dd></div><div><dt>Output policy</dt><dd id="guard-reasons">—</dd></div><div><dt>Display origin</dt><dd id="display-origin">—</dd></div><div><dt>Elapsed including setup</dt><dd id="elapsed">—</dd></div><div><dt>Error type</dt><dd id="error-type">—</dd></div></dl><h4>Observed model timings and counters</h4><pre id="model-metrics">Unavailable</pre><p class="activity-caption">Raw model text is untrusted and shown only here, escaped. The guard is narrow and not proof of truthfulness.</p><pre id="raw-answer">No model output.</pre></div></details>
+    </aside>
+  </main>
+  <section id="proof-view" class="proof-view" aria-labelledby="proof-title" hidden>
+    <div class="proof-heading"><div><span class="eyebrow">SEPARATE SYNTHETIC WORKER CONTEXT</span><h2 id="proof-title">Processing &amp; replication proof</h2><p>Read-only retained worker result · not the selected inspector fixture and not performed by Llama. A result map, not live execution.</p></div><button type="button" id="proof-return-ask" class="primary-button">Ask about selected record →</button></div>
+    <div id="proof-error" class="warning" role="alert" hidden>Proof snapshot unavailable or invalid. No success is inferred.</div>
+    <div id="proof-ready" hidden>
+      <p class="proof-origin"><strong>Retained snapshot</strong> · <span id="proof-cache">Cache status unknown</span> · <span id="proof-retrieved">Retrieval time unknown</span> · <span id="proof-executed">Execution time unknown</span></p>
+      <ol class="proof-steps" aria-label="Evidence sequence">
+        <li><span>01 / Processor output</span><strong id="proof-step-processor">Not established</strong></li>
+        <li><span>02 / Handoff</span><strong id="proof-step-handoff">Not established</strong></li>
+        <li><span>03 / Replication</span><strong id="proof-step-replication">Not established</strong></li>
+        <li><span>04 / Independent readback</span><strong id="proof-step-readback">Not established</strong></li>
+        <li><span>05 / Exact replay</span><strong id="proof-step-replay">Not established</strong></li>
+      </ol>
+      <div class="proof-metrics">
+        <div><small>Processor bytes</small><strong id="proof-source-size">—</strong></div>
+        <div><small>Target bytes</small><strong id="proof-target-size">—</strong></div>
+        <div><small>First-run writes</small><strong id="proof-first-published">—</strong></div>
+        <div><small>First-run verification</small><strong id="proof-first-verified">—</strong></div>
+        <div><small>Independent readback</small><strong id="proof-readback-verified">—</strong></div>
+        <div><small>Replay writes</small><strong id="proof-replay-published">—</strong></div>
+      </div>
+      <dl class="proof-identities"><div><dt>Source SHA-256</dt><dd id="proof-source-sha">Unknown</dd></div><div><dt>Target SHA-256</dt><dd id="proof-target-sha">Unknown</dd></div><div><dt>Target ID</dt><dd id="proof-target-id">Unknown</dd></div></dl>
+      <p class="proof-caveat">Replay verified: <span id="proof-replay-verified">unknown</span>. A zero replay verification count is not failed independent readback; it is a separate stage.</p>
+      <p class="proof-caveat" id="proof-attestation">Original HTTP response bytes and retrieval UTC have not been attested.</p>
+      <h3>Evidence qualifications</h3><ul id="proof-limitations" class="proof-limits"></ul>
+      <details class="evidence-details"><summary>Safe raw proof JSON and provenance</summary><p class="activity-caption">Never attached to selected records or model tools. Rendered only as escaped text.</p><h4>Committed snapshot</h4><pre class="proof-json" id="proof-raw"></pre><h4>Snapshot provenance</h4><pre class="proof-json" id="proof-provenance"></pre></details>
+    </div>
+    <div class="proof-links"><a target="_blank" rel="noopener noreferrer" href="https://seemorgh-evidence-showcase-45655632eff2.herokuapp.com/api/demo">Public API result ↗</a><a target="_blank" rel="noopener noreferrer" href="https://github.com/Seemorghdev/edge-evidence-showcase/tree/531f1f6d500a2b23de354e9f0444adaa782fc1ae">Source revision ↗</a><a target="_blank" rel="noopener noreferrer" href="https://docs.mehridian.tech/edge-evidence/replication/verification-readback/">Readback documentation ↗</a></div>
+  </section>
+  </div><!-- /.workbench -->
+  <footer class="footer"><span>EDGE EVIDENCE · LOCAL INVESTIGATION</span><span>20-turn ephemeral limit · no model conversation memory · a disconnected stream does not cancel inference</span></footer>
+</div>
+</body></html>

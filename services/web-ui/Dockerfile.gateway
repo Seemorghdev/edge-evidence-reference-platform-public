@@ -1,17 +1,23 @@
-FROM python:3.12-slim AS runtime
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=8080 EDGE_AGENT_ENABLE_ADK=0
+# REVIEW candidate: pinned CPython 3.12.14, Debian bookworm, Linux AMD64 image manifest.
+# Image manifest sha256 is immutable; revalidate availability on the Mac before acceptance.
+FROM --platform=linux/amd64 python:3.12.14-slim-bookworm@sha256:1aaa65a85fda306ffb8b910824d4e93bdce61e212c7e87168123ea3073b41a1a
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/app:/app/native \
+    EDGE_AGENT_ENABLE_ADK=0 EDGE_REVIEW_TEST_FIXTURES=0 PORT=8080 \
+    PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 WORKDIR /app
-RUN groupadd --gid 65532 app && useradd --uid 65532 --gid app --create-home app
-COPY packages/shared-contracts /build/shared-contracts
-COPY services/evidence-api /build/evidence-api
-COPY services/edge-agent /build/edge-agent
-COPY services/web-ui /build/web-ui
-RUN python -m pip install --no-cache-dir \
-    /build/shared-contracts \
-    /build/evidence-api \
-    /build/edge-agent \
-    /build/web-ui \
-    && rm -rf /build
+RUN groupadd --gid 65532 edge && useradd --uid 65532 --gid 65532 --no-create-home --shell /usr/sbin/nologin edge
+COPY requirements-hosted-linux-amd64.lock /app/requirements-hosted-linux-amd64.lock
+RUN python -m pip install --require-hashes --only-binary=:all: -r /app/requirements-hosted-linux-amd64.lock \
+    && python -m pip check
+# The minimal named context contains only 10 reviewed Python files in the three native packages.
+# No pip install of local source: PYTHONPATH avoids unpinned setuptools/wheel build dependencies.
+COPY native/ /app/native/
+COPY upstream-notices/ /app/upstream-notices/
+COPY web-ui/ /app/native/
+COPY hosted_packaging/runtime_inventory.py hosted_packaging/hosted_entrypoint.py /app/hosted_packaging/
+COPY CONTEXT-MANIFEST.json /app/CONTEXT-MANIFEST.json
+RUN python /app/hosted_packaging/runtime_inventory.py \
+    && python -c 'from edge_evidence_contracts.models import ArtifactProjection; from edge_evidence_evidence_api.app import app as a; from edge_evidence_edge_agent.app import app as b; from edge_evidence_web_ui.gateway import app as g; print(a.title, b.title, g.title)'
 USER 65532:65532
 EXPOSE 8080
-CMD ["sh", "-c", "exec uvicorn edge_evidence_web_ui.gateway:app --host 0.0.0.0 --port ${PORT:-8080}"]
+ENTRYPOINT ["python", "/app/hosted_packaging/hosted_entrypoint.py"]

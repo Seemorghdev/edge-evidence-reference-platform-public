@@ -40,6 +40,79 @@ APPROVED_PUBLIC_REPOSITORY_LINKS = {
         "https://github.com/Seemorghdev/edge-evidence-reference-platform-public",
     },
 }
+
+# Exact public-source provenance only; unlisted identities remain forbidden.
+APPROVED_SOURCE_IDENTIFIERS = {
+    ".github/workflows/gateway-container.yml": ["9334b4966d88416842fb10fe7666da4411bac185"],
+    "examples/local-llama-workbench/SOURCE-MANIFEST.json": [
+        "0a3203c59765ca3c80e460cb1c96cfbd2d3027ba",
+        "1b9f5fe4da58751eadf192d2b37eb78592056646",
+        "2e950cf8a3e218e640358b43c38f0ddd6b263e6e",
+        "3060e280aa2f6c95fb5e06aed2d253593c507130",
+        "35933e6e705c8ac6e4eabca9d677b9fc6dc79f00",
+        "37e8a8f9a34ff04eea621d146fea078632ed9125",
+        "7a401b9587911cde53029a4008c0c6d60565ff11",
+        "92becd047a0f441d74bec58dadc2370acf786eff",
+        "998982ccacfd3e9aa13910caceb6eedb9d2f0814",
+        "a34aec66288cb5a68f984cdd819cb3bc7d8ba58b",
+        "ab99168f00e17ddc87f35c833f6a00bdf68e6e08",
+        "ba303c716994ec0520a8151542a3d3be5fd58f5a",
+        "d29502cd5b2570517fb2418bd4956cdb9e2fbddf",
+        "d645695673349e3947e8e5ae42332d0ac3164cd7",
+    ],
+    "examples/local-llama-workbench/proof/provenance.json": [
+        "531f1f6d500a2b23de354e9f0444adaa782fc1ae"
+    ],
+    "examples/local-llama-workbench/runtime/boundaries.py": [
+        "37e8a8f9a34ff04eea621d146fea078632ed9125"
+    ],
+    "examples/local-llama-workbench/runtime/case_review.py": [
+        "37e8a8f9a34ff04eea621d146fea078632ed9125"
+    ],
+    "examples/local-llama-workbench/ui/index.html": ["531f1f6d500a2b23de354e9f0444adaa782fc1ae"],
+    "services/web-ui/hosted_packaging/PUBLIC-SOURCE-BLOBS.json": [
+        "050b93b5a8fab74017f23a771a25e0e04dd71b89",
+        "0a3203c59765ca3c80e460cb1c96cfbd2d3027ba",
+        "1654e90ab0cba4a0cfb87186e0dc1b2d5f192e29",
+        "1b9f5fe4da58751eadf192d2b37eb78592056646",
+        "35933e6e705c8ac6e4eabca9d677b9fc6dc79f00",
+        "92becd047a0f441d74bec58dadc2370acf786eff",
+        "9334b4966d88416842fb10fe7666da4411bac185",
+        "9a3ba34fb41192e73448f65e96bf1530c69ddedc",
+        "a34aec66288cb5a68f984cdd819cb3bc7d8ba58b",
+        "ab99168f00e17ddc87f35c833f6a00bdf68e6e08",
+        "ba303c716994ec0520a8151542a3d3be5fd58f5a",
+        "d29502cd5b2570517fb2418bd4956cdb9e2fbddf",
+        "d645695673349e3947e8e5ae42332d0ac3164cd7",
+        "fa3b78686124cd4e12f6cf34cf083eee173d7504",
+    ],
+    "services/web-ui/src/edge_evidence_web_ui/workbench/retained-provenance.json": [
+        "531f1f6d500a2b23de354e9f0444adaa782fc1ae"
+    ],
+}
+APPROVED_PUBLIC_REPOSITORY_LINKS[".github/workflows/gateway-container.yml"] = {
+    "https://github.com/Seemorghdev/edge-evidence-reference-platform-public.git"
+}
+APPROVED_PUBLIC_REPOSITORY_LINKS.update(
+    {
+        "examples/local-llama-workbench/SOURCE-MANIFEST.json": {
+            "https://github.com/Seemorghdev/edge-evidence-reference-platform-public"
+        },
+        "examples/local-llama-workbench/proof/provenance.json": {
+            "https://github.com/Seemorghdev/edge-evidence-showcase"
+        },
+        "examples/local-llama-workbench/ui/index.html": {
+            "https://github.com/Seemorghdev/edge-evidence-showcase/tree/531f1f6d500a2b23de354e9f0444adaa782fc1ae"
+        },
+        "services/web-ui/src/edge_evidence_web_ui/workbench/index.html": {
+            "https://github.com/Seemorghdev/edge-evidence-reference-platform-public/tree/main/examples/local-llama-workbench"
+        },
+        "services/web-ui/src/edge_evidence_web_ui/workbench/retained-provenance.json": {
+            "https://github.com/Seemorghdev/edge-evidence-showcase"
+        },
+    }
+)
+
 GITHUB_REPOSITORY_URL = re.compile(r"https?://github\.com/[^\s\"'<>]+", re.IGNORECASE)
 HEX40 = re.compile(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])", re.IGNORECASE)
 PROJECT_COORDINATE = re.compile(r"\bproject-[a-z0-9-]{8,}\b", re.IGNORECASE)
@@ -73,7 +146,8 @@ def validate_text(relative: str, text: str) -> None:
     for fragment in FORBIDDEN_TEXT:
         if fragment.lower() in lowered:
             raise ValueError(f"forbidden projection content in {relative}: {fragment}")
-    if HEX40.search(scanned_text):
+    allowed_ids = set(APPROVED_SOURCE_IDENTIFIERS.get(relative, []))
+    if any(match.group().lower() not in allowed_ids for match in HEX40.finditer(scanned_text)):
         raise ValueError(f"commit/tree-shaped identifier present in {relative}")
     if PROJECT_COORDINATE.search(scanned_text):
         raise ValueError(f"project coordinate present in {relative}")

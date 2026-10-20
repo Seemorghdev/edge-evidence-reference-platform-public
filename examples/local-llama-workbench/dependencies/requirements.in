@@ -1,0 +1,4 @@
+# Isolated first local smoke test; never installed into the application runtime.
+google-adk==2.6.3
+litellm==1.88.6
+pydantic==2.12.5

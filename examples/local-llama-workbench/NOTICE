@@ -1,0 +1,11 @@
+Edge Evidence local Llama workbench
+Copyright 2026 Seemorghdev
+
+Original workbench source and synthetic assets are licensed under Apache License 2.0.
+The pinned Reference Platform excerpt retains public-source/LICENSE, NOTICE and
+THIRD_PARTY_NOTICES.md.
+
+Google ADK recipe interfaces informed the workbench's organization and interaction
+design. No Google sample source, branding, screenshot, or UI asset is copied.
+Google ADK, LiteLLM, other dependencies, Ollama, and Llama model weights retain their
+respective licenses. No endorsement or model redistribution is implied.

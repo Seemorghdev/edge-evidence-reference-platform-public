@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/Seemorghdev/edge-evidence-reference-platform-public",
+  "revision": "37e8a8f9a34ff04eea621d146fea078632ed9125",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "git_blob_sha1": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "b753199ade992510a7b84177bd9499b4d881c20e5ab0e4078ced6f1069920f8a",
+      "git_blob_sha1": "92becd047a0f441d74bec58dadc2370acf786eff"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "f0f1b82993f1061dbc3d14f52fba1c83dbc62154c84ba620e96afbc638650bf7",
+      "git_blob_sha1": "ab99168f00e17ddc87f35c833f6a00bdf68e6e08"
+    },
+    {
+      "path": "fixtures/artifact-complete.json",
+      "sha256": "7a668b4b14aba43a57e0448efce74f5e1fc58f8480add133c0bae6f75ef32250",
+      "git_blob_sha1": "998982ccacfd3e9aa13910caceb6eedb9d2f0814"
+    },
+    {
+      "path": "fixtures/artifact-deferred.json",
+      "sha256": "24cfe2b8e23559f7975f8e08257639b680ff9ea9699de92ef24de8cb24550f64",
+      "git_blob_sha1": "2e950cf8a3e218e640358b43c38f0ddd6b263e6e"
+    },
+    {
+      "path": "fixtures/artifact-prepared.json",
+      "sha256": "a0b501ced8b46ef6e749b9d11a6ff2f30be9638137abc5f4a6635fb0528bf40d",
+      "git_blob_sha1": "7a401b9587911cde53029a4008c0c6d60565ff11"
+    },
+    {
+      "path": "services/edge-agent/src/edge_evidence_edge_agent/__init__.py",
+      "sha256": "3e6d7cb50bdf8255418b279a00a9b929e7b1f44ac3cc6c99e07b5edbae5ef63d",
+      "git_blob_sha1": "0a3203c59765ca3c80e460cb1c96cfbd2d3027ba"
+    },
+    {
+      "path": "services/edge-agent/src/edge_evidence_edge_agent/adk_adapter.py",
+      "sha256": "39f7864df4a89a6259e3815054c2d4bb1d991c23680a98259cba7f532591b4b6",
+      "git_blob_sha1": "3060e280aa2f6c95fb5e06aed2d253593c507130"
+    },
+    {
+      "path": "services/edge-agent/src/edge_evidence_edge_agent/core.py",
+      "sha256": "ec12e1a9b0962522d51694fce54d588a3c2cfdcb1cb76547db1cfef4d963598d",
+      "git_blob_sha1": "35933e6e705c8ac6e4eabca9d677b9fc6dc79f00"
+    },
+    {
+      "path": "packages/shared-contracts/src/edge_evidence_contracts/__init__.py",
+      "sha256": "7846e0953ca69028eba0873c6762daeb482dc981931afc6106387e24becdbe7f",
+      "git_blob_sha1": "a34aec66288cb5a68f984cdd819cb3bc7d8ba58b"
+    },
+    {
+      "path": "packages/shared-contracts/src/edge_evidence_contracts/clients.py",
+      "sha256": "975a54b1c807453db09a14cb580994b159a51fb8a597b007fa998f2f7b60beb6",
+      "git_blob_sha1": "1b9f5fe4da58751eadf192d2b37eb78592056646"
+    },
+    {
+      "path": "packages/shared-contracts/src/edge_evidence_contracts/components.py",
+      "sha256": "51a60310d4fe27e2f425c79f1727f9dfe9ee8c5fb859f1d391e7e489d52ab675",
+      "git_blob_sha1": "d29502cd5b2570517fb2418bd4956cdb9e2fbddf"
+    },
+    {
+      "path": "packages/shared-contracts/src/edge_evidence_contracts/models.py",
+      "sha256": "919bae1f3a37c7d23b52c14166b2c555bea43e4ce7aa7a6f535d5bbd7f3d279c",
+      "git_blob_sha1": "ba303c716994ec0520a8151542a3d3be5fd58f5a"
+    }
+  ]
+}

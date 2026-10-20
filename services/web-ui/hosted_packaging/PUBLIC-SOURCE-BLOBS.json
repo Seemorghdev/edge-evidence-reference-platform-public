@@ -1,0 +1,22 @@
+{
+  "public_repository": "Seemorghdev/edge-evidence-reference-platform-public",
+  "revision": "9334b4966d88416842fb10fe7666da4411bac185",
+  "distribution": "source-only: never pip install a moving local path",
+  "notices": {
+    "LICENSE": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+    "NOTICE": "92becd047a0f441d74bec58dadc2370acf786eff",
+    "THIRD_PARTY_NOTICES.md": "ab99168f00e17ddc87f35c833f6a00bdf68e6e08"
+  },
+  "files": {
+    "packages/shared-contracts/src/edge_evidence_contracts/__init__.py": "a34aec66288cb5a68f984cdd819cb3bc7d8ba58b",
+    "packages/shared-contracts/src/edge_evidence_contracts/clients.py": "1b9f5fe4da58751eadf192d2b37eb78592056646",
+    "packages/shared-contracts/src/edge_evidence_contracts/components.py": "d29502cd5b2570517fb2418bd4956cdb9e2fbddf",
+    "packages/shared-contracts/src/edge_evidence_contracts/models.py": "ba303c716994ec0520a8151542a3d3be5fd58f5a",
+    "services/evidence-api/src/edge_evidence_evidence_api/__init__.py": "fa3b78686124cd4e12f6cf34cf083eee173d7504",
+    "services/evidence-api/src/edge_evidence_evidence_api/app.py": "1654e90ab0cba4a0cfb87186e0dc1b2d5f192e29",
+    "services/evidence-api/src/edge_evidence_evidence_api/store.py": "050b93b5a8fab74017f23a771a25e0e04dd71b89",
+    "services/edge-agent/src/edge_evidence_edge_agent/__init__.py": "0a3203c59765ca3c80e460cb1c96cfbd2d3027ba",
+    "services/edge-agent/src/edge_evidence_edge_agent/app.py": "9a3ba34fb41192e73448f65e96bf1530c69ddedc",
+    "services/edge-agent/src/edge_evidence_edge_agent/core.py": "35933e6e705c8ac6e4eabca9d677b9fc6dc79f00"
+  }
+}

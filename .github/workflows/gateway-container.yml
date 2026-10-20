@@ -57,11 +57,16 @@ jobs:
           done
           cat /tmp/baseline-api.log /tmp/baseline-agent.log /tmp/baseline-ui.log
           exit 1
+      - name: Stage immutable public native services
+        run: |
+          git clone --no-checkout https://github.com/Seemorghdev/edge-evidence-reference-platform-public.git "$RUNNER_TEMP/native-source"
+          git -C "$RUNNER_TEMP/native-source" checkout --detach 9334b4966d88416842fb10fe7666da4411bac185
+          python services/web-ui/hosted_packaging/stage_build_context.py --public-checkout "$RUNNER_TEMP/native-source" --output "$RUNNER_TEMP/gateway-context"
       - name: Build Linux gateway image without publishing
-        run: docker build --platform linux/amd64 --provenance=false --sbom=false -f services/web-ui/Dockerfile.gateway -t edge-evidence-gateway:test .
+        run: docker build --platform linux/amd64 --provenance=false --sbom=false -f "$RUNNER_TEMP/gateway-context/Dockerfile.gateway" -t edge-evidence-gateway:test "$RUNNER_TEMP/gateway-context"
       - name: Start image with a platform-assigned PORT
         run: |
-          docker run -d --name gateway -e PORT=18083 -p 127.0.0.1:18083:18083 edge-evidence-gateway:test
+          docker run -d --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m --name gateway -e PORT=18083 -p 127.0.0.1:18083:18083 edge-evidence-gateway:test
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:18083/healthz >/dev/null; then exit 0; fi
             sleep 1
