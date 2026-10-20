@@ -7,19 +7,11 @@ def test_gateway_serves_ui_and_same_origin_service_routes() -> None:
 
     page = client.get("/")
     assert page.status_code == 200
-    assert 'const evidenceApi = ""' in page.text
-    assert 'const edgeAgent = ""' in page.text
-    assert "preserving evidence, processing it reliably" in page.text
-    assert "read-only inspection of synthetic example states" in page.text
-    assert "does not run the complete processing or replication workflow" in page.text
-    assert "Live Processor + Replication proof (JSON/API)" in page.text
-    assert "Processor engineering repository" in page.text
-    assert "Replication projection repository" in page.text
-    assert "Reference Platform UI and gateway repository" in page.text
-    assert "https://seemorgh-evidence-showcase-45655632eff2.herokuapp.com/api/demo" in page.text
-    assert "https://github.com/Seemorghdev/edge-evidence-processor-public" in page.text
-    assert "https://github.com/Seemorghdev/edge-evidence-replication-projection" in page.text
-    assert "https://github.com/Seemorghdev/edge-evidence-reference-platform-public" in page.text
+    assert 'data-view="inspect"' in page.text
+    assert 'data-view="proof"' in page.text
+    assert 'data-view="ask"' in page.text
+    assert "no model runs on this page" in page.text
+    assert "Viewing this snapshot runs no workers" in page.text
 
     artifacts = client.get("/api/v1/artifacts")
     assert artifacts.status_code == 200

@@ -50,6 +50,21 @@ def test_projection_guard_keeps_private_operational_identifiers_forbidden() -> N
         validate_text(GATEWAY_TEST, private_identifier)
 
 
+def test_public_source_pin_exemptions_are_exact_and_file_scoped() -> None:
+    import json
+
+    path = "examples/local-llama-workbench/SOURCE-MANIFEST.json"
+    manifest = (ROOT / path).read_text()
+    validate_text(path, manifest)
+    pin = json.loads(manifest)["revision"]
+    with pytest.raises(ValueError, match="identifier"):
+        validate_text(path, manifest.replace(pin, "f" * 40))
+    with pytest.raises(ValueError):
+        validate_text("README.md", manifest)
+    with pytest.raises(ValueError, match="unapproved GitHub"):
+        validate_text(path, GITHUB_ROOT + OWNER + "/PLANNING")
+
+
 def test_compose_core_is_exactly_three_application_services() -> None:
     compose = yaml.safe_load(COMPOSE.read_text(encoding="utf-8"))
     services = compose["services"]

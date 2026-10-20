@@ -8,6 +8,20 @@ The product demonstrates a strict authority split: deterministic workers own evi
 
 Try the [live Visual Gateway](https://edge-evidence-visual-gateway-2e3eaeb86f95.herokuapp.com/) to inspect three deterministic synthetic example states, read the [Mehridian case study](https://mehridian.tech/projects/edge-evidence) for the project overview, or explore the [Edge Evidence technical Docs](https://docs.mehridian.tech/edge-evidence/) for setup, contracts, and engineering boundaries. The hosted Gateway is read-only; it does not execute the separate processing and replication workflow.
 
+## Connected workbench source
+
+The revised [model-free Gateway](services/web-ui/HOSTED-WORKBENCH.md) brings together
+**Inspect**, a separate **retained Proof**, and an **Ask** view explaining how to run
+[the optional local Llama workbench](examples/local-llama-workbench/README.md).
+The hosted interface is model-free: it never calls a reviewer’s computer or runs
+inference. Application deployment is separate from obtaining this source.
+
+Original code and synthetic assets are Apache-2.0. Model weights are obtained
+separately under their own terms; dependency/upstream notices are preserved.
+Model output and provisional streaming are not authoritative inspector facts.
+Known limitations include delayed/bursty streaming and unhelpful or withheld answers.
+No recording is included or required to inspect this code.
+
 ## Three-service product story
 
 | Service | Responsibility | Authority boundary |

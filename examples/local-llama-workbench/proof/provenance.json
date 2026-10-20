@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source_url": "https://seemorgh-evidence-showcase-45655632eff2.herokuapp.com/api/demo",
+  "source_repository": "https://github.com/Seemorghdev/edge-evidence-showcase",
+  "source_revision": "531f1f6d500a2b23de354e9f0444adaa782fc1ae",
+  "snapshot_format": "Raw UTF-8 JSON HTTP response bytes; no reserialization",
+  "snapshot_sha256": "e0418735bb2f2b9a40a4b0fb32222daf8dd45b69cb5e9c821a74ab442ab10519",
+  "raw_http_payload_sha256": "e0418735bb2f2b9a40a4b0fb32222daf8dd45b69cb5e9c821a74ab442ab10519",
+  "source_retrieved_utc": "2026-10-19T10:55:05Z",
+  "retrieval_time_basis": "Mac client UTC at completed HTTP capture; not worker execution time",
+  "schema_version_handled": 1,
+  "execution_time_utc": null,
+  "comment": "SHA-256 covers the captured response bytes including the trailing newline. Retrieval time is not worker execution time. The source revision is an implementation reference, not an attestation of hosted deployment revision. Original worker execution time is unknown; cached:true is preserved."
+}
