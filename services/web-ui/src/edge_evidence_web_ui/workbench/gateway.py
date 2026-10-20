@@ -14,7 +14,7 @@ from pathlib import Path
 from edge_evidence_edge_agent.app import app as agent_service
 from edge_evidence_evidence_api.app import app as evidence_service
 from fastapi import APIRouter, FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
 
@@ -49,6 +49,11 @@ def index():
             ),
         },
     )
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return Response(status_code=204)
 
 
 @app.get("/api/review/capabilities")
