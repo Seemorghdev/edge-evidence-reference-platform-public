@@ -36,8 +36,16 @@ def test_served_ui_and_assets():
         assert marker in page.text
     assert "no model runs on this page" in page.text
     assert "no interactive model or generated answers" in page.text
+    assert "No new copy check." in page.text
+    assert "does not run workers or reread the destination" in page.text
+    assert "Recorded digest check" in page.text
     assert client.get("/static/workbench.css").status_code == 200
-    assert client.get("/static/workbench.js").status_code == 200
+    script = client.get("/static/workbench.js")
+    assert script.status_code == 200
+    assert "Inspector response matched the selected synthetic record" in script.text
+    assert "Stored bytes and external copies were not checked" in script.text
+    assert "Retained JSON SHA-256 checked" in script.text
+    assert "Verified response bound to selected record" not in script.text
 
 
 def test_retained_proof_and_corruption_fail_closed():

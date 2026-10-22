@@ -34,7 +34,7 @@
         button.append(title,desc,badge);button.addEventListener('click',()=>selectRecord(record));buttons.append(button);
       }
       await selectRecord(records[0]);
-    }catch(error){$('record-buttons').textContent='Record service unavailable.';$('inspect-status').textContent='Unable to load verified API facts.';$('facts-content').hidden=true;}
+    }catch(error){$('record-buttons').textContent='Record service unavailable.';$('inspect-status').textContent='Unable to load synthetic records; no inspection shown.';$('facts-content').hidden=true;}
   }
   async function selectRecord(record){
     const turn=++seq;selectedId=record.artifact_id;
@@ -51,7 +51,7 @@
       t('fact-mutation','No');t('fact-eligible',String(record.snapshot_eligible));
       t('fact-id',record.artifact_id);t('fact-digest',record.digest);
       json('record-raw',record);json('inspection-raw',inspection);
-      $('facts-content').hidden=false;t('inspect-status','Verified response bound to selected record.');
+      $('facts-content').hidden=false;t('inspect-status','Inspector response matched the selected synthetic record. Stored bytes and external copies were not checked.');
     }catch(e){if(turn===seq){t('inspect-status','Inspector unavailable or returned conflicting facts. No classification is inferred.');$('facts-content').hidden=true;}}
   }
   async function loadProof(){
@@ -66,7 +66,7 @@
       t('replay-count',rep.replay?.published);t('verified-count',rep.verification?.verified);
       t('proof-source-digest',src.sha256);t('proof-target-digest',rep.target_sha256);
       if(src.sha256!==rep.target_sha256||src.byte_size!==rep.target_byte_size)throw Error('Contradictory snapshot');
-      t('proof-meta',data.snapshot.cached===true?'Originally cached · digest checked':'Cache status not verified');
+      t('proof-meta',data.snapshot.cached===true?'Retained JSON SHA-256 checked · snapshot reports cached':'Retained JSON SHA-256 checked · cache status not established');
       t('proof-time',meta.execution_time_utc?'Original execution recorded: '+meta.execution_time_utc:'Original execution time unknown · no fresh run');
       t('proof-retrieved','Captured snapshot retrieved: '+(meta.source_retrieved_utc||'Unknown'));
       json('proof-raw',data.snapshot);json('provenance-raw',meta);
