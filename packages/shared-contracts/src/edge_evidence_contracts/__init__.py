@@ -16,6 +16,7 @@ from .models import (
     ArtifactProjection,
     ArtifactState,
     EvidenceReceipt,
+    InspectionClassification,
     ProcessorSummary,
     ReplicationSummary,
 )
@@ -28,6 +29,7 @@ __all__ = [
     "EdgeAgentClient",
     "EvidenceApiClient",
     "EvidenceReceipt",
+    "InspectionClassification",
     "ProcessorRunSummary",
     "ProcessorSummary",
     "ReplicationSummary",

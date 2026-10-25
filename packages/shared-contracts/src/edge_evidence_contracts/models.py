@@ -62,11 +62,20 @@ class EvidenceReceipt(BaseModel):
     provenance: dict[str, str]
 
 
+class InspectionClassification(StrEnum):
+    HEALTHY_COMPLETE = "healthy-complete"
+    BOUNDED_DEFER = "bounded-defer"
+    PREPARED_AWAITING_CATCH_UP = "prepared-awaiting-catch-up"
+    PROCESSING_IN_PROGRESS = "processing-in-progress"
+    FAILED_RECORDED = "failed-recorded"
+    ATTENTION_REQUIRED = "attention-required"
+
+
 class AgentInspection(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     artifact_id: str
-    classification: str
+    classification: InspectionClassification
     explanation: str
     proposal: dict[str, Any] | None = None
     mutation_authorized: bool = False
