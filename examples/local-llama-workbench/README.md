@@ -7,8 +7,11 @@ The three records are independent examples, not a live end-to-end pipeline.
 
 ## Run locally
 
-Tested baseline: Python 3.12.13, Ollama 0.40.6, llama3.1:8b with model digest
+Historical tested baseline: Python 3.12.13, Ollama 0.40.6, llama3.1:8b with model digest
 `46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e`.
+The exact Ollama pin is now 0.40.11 for compatibility with current macOS installs.
+Offline checks pass with the updated pin; a real-inference check on 0.40.11 is
+still pending. The added dependency hashes are for Python 3.12 on macOS arm64.
 Install Ollama from its official distribution and obtain the model separately,
 subject to its license. No weights or model service are shipped here.
 

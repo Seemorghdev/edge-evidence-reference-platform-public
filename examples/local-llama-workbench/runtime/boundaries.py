@@ -12,7 +12,7 @@ from explanation_policy import EXPLANATION_SCHEMA
 REVISION = "37e8a8f9a34ff04eea621d146fea078632ed9125"
 MODEL = "llama3.1:8b"
 DIGEST = "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e"
-VERSION = "0.40.6"  # Installed runtime for this run; earlier smoke used 0.40.4.
+VERSION = "0.40.11"  # Exact Mac compatibility pin, 2026-10-26; historical baseline: 0.40.6.
 PORT = 11435
 MAX_REQUESTS, MAX_TOOLS, MAX_TOKENS, CONTEXT = 2, 2, 256, 4096
 MANIFEST_SHA = "57e6195a636f97b808476b33813fecb61a72a891803edfd5119b4d123846c947"
