@@ -44,6 +44,7 @@ APPROVED_PUBLIC_REPOSITORY_LINKS = {
 # Exact public-source provenance only; unlisted identities remain forbidden.
 APPROVED_SOURCE_IDENTIFIERS = {
     ".github/workflows/gateway-container.yml": ["9334b4966d88416842fb10fe7666da4411bac185"],
+    ".github/workflows/live-observation.yml": ["78136e8c40af18b3db8ee1a57eabff8aa8c79db5"],
     "examples/local-llama-workbench/SOURCE-MANIFEST.json": [
         "0a3203c59765ca3c80e460cb1c96cfbd2d3027ba",
         "1b9f5fe4da58751eadf192d2b37eb78592056646",
@@ -161,7 +162,7 @@ def main() -> int:
 
     workflow_dir = ROOT / ".github" / "workflows"
     workflows = sorted(path.name for path in workflow_dir.glob("*.y*ml"))
-    if workflows != ["gateway-container.yml", "required.yml"]:
+    if workflows != ["gateway-container.yml", "live-observation.yml", "required.yml"]:
         raise SystemExit(f"unexpected workflow set: {workflows}")
 
     for path in iter_text_files():
