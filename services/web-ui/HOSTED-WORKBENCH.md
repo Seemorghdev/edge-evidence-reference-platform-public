@@ -32,4 +32,11 @@ The supplied proof remains a cached synthetic filesystem demonstration. A matchi
 capture digest establishes retained-byte integrity, not a fresh execution or physical
 NAS/cloud acceptance. Corrupt proof returns unavailable, never inferred success.
 
+Proof playback steps through that same snapshot: Processor, handoff, Replication,
+readback and replay. Each step quotes recorded fields by JSON path and keeps the page's
+own wording labelled as presentation. The standalone Processor and Replication proofs
+appear only as recorded passes because their step-level summaries are not in the
+snapshot. A missing recorded field or a source/target mismatch returns unavailable.
+Playback adds no route and runs no worker, target read or model.
+
 These packaging instructions do not authorize image publication or deployment.
