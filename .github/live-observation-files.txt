@@ -1,0 +1,3 @@
+/ services/web-ui/src/edge_evidence_web_ui/workbench/index.html
+/static/workbench.js services/web-ui/src/edge_evidence_web_ui/workbench/static/workbench.js
+/static/workbench.css services/web-ui/src/edge_evidence_web_ui/workbench/static/workbench.css
