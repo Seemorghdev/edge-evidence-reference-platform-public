@@ -10,8 +10,7 @@ The three records are independent examples, not a live end-to-end pipeline.
 Historical tested baseline: Python 3.12.13, Ollama 0.40.6, llama3.1:8b with model digest
 `46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e`.
 The exact Ollama pin is now 0.40.11 for compatibility with current macOS installs.
-Offline checks pass with the updated pin; a real-inference check on 0.40.11 is
-still pending. The added dependency hashes are for Python 3.12 on macOS arm64.
+Offline checks pass with the updated pin. A bounded real-inference check on 0.40.11 at workbench head `963d9c6` (26 October 2026; three questions fixed in advance, one turn each, no retries) displayed one model explanation and two withheld answers. In both withheld turns, the retained raw model text expressed the relevant boundary in phrasings outside the guard's recognised denials. The displayed explanation was accurate but not a complete answer: it did not address whether the next step is automatic. No false claim was identified in the displayed text of these three turns; this is an observation, not a benchmark or a general safety finding. The added dependency hashes are for Python 3.12 on macOS arm64.
 Install Ollama from its official distribution and obtain the model separately,
 subject to its license. No weights or model service are shipped here.
 
