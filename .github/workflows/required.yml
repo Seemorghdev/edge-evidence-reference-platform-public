@@ -24,6 +24,11 @@ jobs:
           cache: pip
       - name: Install workspace
         run: python scripts/install_workspace.py --dev
+      - name: Pin the web framework to the hosted runtime lock
+        run: |
+          pins=$(grep -E '^(fastapi|starlette)==' services/web-ui/requirements-hosted-linux-amd64.lock | awk '{print $1}')
+          python -m pip install --disable-pip-version-check --no-deps $pins
+          python -m pip show fastapi starlette | grep -E '^(Name|Version):'
       - name: Lint
         run: ruff check packages services tools tests scripts
       - name: Test application and projection boundaries

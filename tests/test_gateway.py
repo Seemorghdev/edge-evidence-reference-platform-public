@@ -11,7 +11,7 @@ def test_gateway_serves_ui_and_same_origin_service_routes() -> None:
     assert 'data-view="proof"' in page.text
     assert 'data-view="ask"' in page.text
     assert "no model runs on this page" in page.text
-    assert "Viewing this snapshot runs no workers" in page.text
+    assert "runs no worker, reads no target and calls no model" in page.text
 
     artifacts = client.get("/api/v1/artifacts")
     assert artifacts.status_code == 200

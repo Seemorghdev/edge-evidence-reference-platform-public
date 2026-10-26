@@ -1,13 +1,80 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Edge Evidence · Read-only workbench</title><link rel="stylesheet" href="/static/workbench.css"><script src="/static/workbench.js" defer></script></head>
-<body><div class="app">
-<header class="topbar"><a class="brand" href="https://mehridian.tech/projects/edge-evidence" aria-label="Mehridian Edge Evidence case study"><span class="mark">E<span>·</span></span><span><strong>Edge Evidence</strong><small>READ-ONLY WORKBENCH</small></span></a><span class="online-chip"><span class="dot"></span> Hosted · Read-only</span></header>
-<nav class="nav" aria-label="Workspace views"><button class="nav-item active" type="button" data-view="inspect" aria-current="page"><span class="nav-icon">⌕</span><span>Inspect</span><small>Evidence facts</small></button><button class="nav-item" data-view="proof" type="button"><span class="nav-icon">⇄</span><span>Proof</span><small>Retained snapshot</small></button><button class="nav-item" data-view="ask" type="button"><span class="nav-icon">✳</span><span>Ask</span><small>Local Llama only</small></button></nav>
-<main class="main"><div id="fixture-flag" class="fixture-flag" hidden>PRIVATE TEST REHEARSAL — synthetic fixture-service adapter. Not a deployed Gateway or live model.</div>
-<section id="inspect-view" class="view"><div class="intro"><div class="eyebrow">01 / INSPECT · DETERMINISTIC</div><h1>Read the record.<br><span>Keep the boundary.</span></h1><p>Select a synthetic example to inspect. The API supplies each actual record; the separate deterministic inspector describes it without changing anything.</p></div>
-<div class="inspect-grid"><section class="panel records" aria-labelledby="record-choice-title"><div class="panel-top"><h2 id="record-choice-title">Synthetic records</h2><span class="micro">SELECT ONE</span></div><div id="record-buttons" role="group" aria-label="Synthetic records"><p>Loading source records…</p></div><div class="footnote">These are three independent examples, not a live processing pipeline.</div></section>
-<section class="panel facts" aria-labelledby="facts-title"><div class="panel-top"><h2 id="facts-title">Selected record</h2><span class="micro">ACTUAL API RESPONSE</span></div><p id="inspect-status" role="status" aria-live="polite">Loading inspection…</p><div id="facts-content" hidden><span id="fact-state" class="pill">—</span><h3 id="fact-title">—</h3><p id="fact-explanation" class="explanation">—</p><div class="fact-grid"><div><span class="field-label">Classification</span><strong id="fact-classification">—</strong></div><div><span class="field-label">Approval required</span><strong id="fact-approval">—</strong></div><div><span class="field-label">Mutation allowed</span><strong id="fact-mutation">—</strong></div><div><span class="field-label">Snapshot eligible</span><strong id="fact-eligible">—</strong></div></div><div class="digest-field"><span class="field-label">Artifact ID</span><code id="fact-id">—</code></div><div class="digest-field"><span class="field-label">Content fingerprint (recorded synthetic digest)</span><code id="fact-digest">—</code></div><details class="raw"><summary>View API record and inspector JSON</summary><p class="field-label">Selected API record</p><pre id="record-raw"></pre><p class="field-label">Inspector response</p><pre id="inspection-raw"></pre></details></div></section></div></section>
-<section id="proof-view" class="view" hidden><div class="intro"><div class="eyebrow">02 / PROOF · SEPARATE RETAINED RESULT</div><h1>Check the copy.<br><span>Know what was verified.</span></h1><p>The Processor and Replication result was captured earlier. Viewing this snapshot runs no workers and does not make its execution fresh.</p></div><div id="proof-error" class="error" role="alert" hidden>Retained proof is unavailable or its exact bytes could not be verified. No proof is inferred.</div><div id="proof-content" hidden><div class="statusbar"><strong>Retained synthetic snapshot</strong><span id="proof-meta">—</span></div><div class="steps" aria-label="Recorded responsibility chain"><div><span>01</span><strong>Processor</strong><small>Recorded output</small></div><div><span>02</span><strong>Handoff</strong><small>Exact source identity</small></div><div><span>03</span><strong>Replication</strong><small>Immutable write</small></div><div><span>04</span><strong>Readback</strong><small>Verified digest</small></div><div><span>05</span><strong>Replay</strong><small>No new write</small></div></div><div class="proof-grid"><div class="panel"><div class="panel-top"><h2>Byte-level comparison</h2><span class="micro">RETAINED VALUES</span></div><div class="numbers"><div><strong id="source-size">—</strong><span>Source bytes</span></div><div><strong id="target-size">—</strong><span>Target bytes</span></div><div><strong id="replay-count">—</strong><span>Replay published</span></div><div><strong id="verified-count">—</strong><span>Readback verified</span></div></div><div class="digest-field"><span class="field-label">Processor output SHA-256</span><code id="proof-source-digest">—</code></div><div class="digest-field"><span class="field-label">Replicated target SHA-256</span><code id="proof-target-digest">—</code></div></div><div class="panel"><div class="panel-top"><h2>Provenance & limits</h2><span class="micro">NO FRESH RUN</span></div><p class="notice" id="proof-time">Original execution time unknown.</p><p id="proof-retrieved" class="muted">—</p><p class="muted">The HTTP snapshot reported <strong>cached: true</strong>. The target was a synthetic local filesystem contract, not physical NAS or cloud storage.</p><details class="raw"><summary>View retained raw JSON and capture provenance</summary><pre id="proof-raw"></pre><p class="field-label">Capture metadata</p><pre id="provenance-raw"></pre></details></div></div></div></section>
-<section id="ask-view" class="view" hidden><div class="intro"><div class="eyebrow">03 / ASK · LOCAL MODEL ONLY</div><h1>Optional explanation.<br><span>On your own computer.</span></h1><p>This hosted workspace provides deterministic, read-only inspection of synthetic records and a separate retained processing-and-replication proof. Llama explanations run only in the optional local workbench; no model runs on this page.</p></div><div class="ask-card"><span class="pill muted-pill">LLAMA NOT AVAILABLE ON HOSTED PAGE</span><h2>Local explanations are separate</h2><p>An optional local-only Llama workbench can explain frozen synthetic records with bounded read-only tools. It is not part of this hosted site. Model prose may be wrong or withheld, and cannot execute workers, approve actions or verify stored copies.</p><div class="link-row"><a href="https://docs.mehridian.tech/edge-evidence/local-workbench/">Local workbench guide ↗</a><a href="https://mehridian.tech/projects/edge-evidence">Project explanation ↗</a><a href="https://github.com/Seemorghdev/edge-evidence-reference-platform-public/tree/main/examples/local-llama-workbench">Local workbench source ↗</a></div><p class="callout">The optional workbench must be installed and run locally with separately licensed model weights. This hosted page has no interactive model or generated answers.</p></div></section>
-</main><footer><span>Synthetic evidence · Read-only inspection · No live worker execution</span><a href="https://docs.mehridian.tech/edge-evidence/boundaries/">Boundaries and verification ↗</a></footer>
-</div></body></html>
+<body>
+<header class="bar">
+  <a class="title" href="https://mehridian.tech/projects/edge-evidence">Edge Evidence <span>read-only workbench</span></a>
+  <nav class="tabs" aria-label="Views"><button type="button" data-view="inspect" class="active" aria-current="page">Inspect</button><button type="button" data-view="proof">Proof</button><button type="button" data-view="ask">Ask</button></nav>
+  <p class="scope">synthetic records · retained snapshot · no workers run</p>
+</header>
+<div id="fixture-flag" class="flag" hidden>PRIVATE TEST REHEARSAL — synthetic fixture-service adapter. Not a deployed Gateway or live model.</div>
+<main>
+
+<section id="inspect-view" class="view" aria-labelledby="inspect-h">
+  <h1 id="inspect-h">Inspect</h1>
+  <p class="lead">Three independent synthetic records from the API, each classified by the deterministic inspector. Nothing is changed or run. Select a row for the full response.</p>
+  <p id="inspect-status" class="status" role="status" aria-live="polite">Loading records…</p>
+  <table class="grid" id="records-table" hidden>
+    <thead><tr><th scope="col">artifact_id</th><th scope="col">state</th><th scope="col">classification</th><th scope="col">approval</th><th scope="col">digest</th></tr></thead>
+    <tbody id="records-body"></tbody>
+  </table>
+  <div id="facts-content" class="detail" hidden>
+    <h2 id="fact-title">—</h2>
+    <p id="fact-explanation" class="explanation">—</p>
+    <dl class="fields">
+      <dt>classification</dt><dd><code id="fact-classification">—</code></dd>
+      <dt>requires_human_approval</dt><dd><code id="fact-approval">—</code></dd>
+      <dt>mutation_authorized</dt><dd><code id="fact-mutation">—</code></dd>
+      <dt>snapshot_eligible</dt><dd><code id="fact-eligible">—</code></dd>
+      <dt>artifact_id</dt><dd><code id="fact-id">—</code></dd>
+      <dt>digest</dt><dd><code id="fact-digest">—</code></dd>
+    </dl>
+    <details><summary>API record and inspector response (JSON)</summary><h3>GET /api/v1/artifacts — selected record</h3><pre id="record-raw"></pre><h3>POST /api/v1/inspect — response</h3><pre id="inspection-raw"></pre></details>
+  </div>
+</section>
+
+<section id="proof-view" class="view" aria-labelledby="proof-h" hidden>
+  <h1 id="proof-h">Proof</h1>
+  <p class="lead"><strong>Playback of a recorded result.</strong> One retained synthetic Processor → Replication run, stepped through by hand. Stepping through it runs no worker, reads no target and calls no model. Values are quoted from the snapshot with their JSON path; lines marked <em>Note</em> are wording added by this page.</p>
+  <div id="proof-error" class="error" role="alert" hidden>Retained proof is unavailable or its exact bytes could not be verified. No proof is inferred.</div>
+  <div id="proof-content" hidden>
+    <dl class="provenance">
+      <dt>snapshot</dt><dd id="proof-meta">—</dd>
+      <dt>retrieved</dt><dd id="proof-retrieved">—</dd>
+      <dt>executed</dt><dd id="proof-time">—</dd>
+      <dt>source</dt><dd><code id="proof-source-digest">—</code></dd>
+      <dt>target</dt><dd><code id="proof-target-digest">—</code></dd>
+    </dl>
+    <ol id="proof-steps" class="steps" aria-label="Recorded steps"></ol>
+    <section class="step" aria-labelledby="step-title">
+      <h2><span id="step-position">—</span> <span id="step-title">—</span></h2>
+      <p class="note"><em>Note</em> <span id="step-presentation">—</span></p>
+      <table class="grid"><thead><tr><th scope="col">JSON path</th><th scope="col">recorded value</th></tr></thead><tbody id="step-recorded"></tbody></table>
+      <div class="controls"><button type="button" id="step-prev">← Previous</button><button type="button" id="step-next">Next →</button><span class="hint">or ← / → keys</span></div>
+    </section>
+    <section aria-labelledby="aggregate-title">
+      <h2 id="aggregate-title">Standalone worker proofs <span class="dim">— pass recorded; steps not retained</span></h2>
+      <p class="note"><em>Note</em> <span id="aggregate-presentation">—</span></p>
+      <table class="grid"><thead><tr><th scope="col">JSON path</th><th scope="col">recorded value</th></tr></thead><tbody id="aggregate-recorded"></tbody></table>
+    </section>
+    <section aria-labelledby="context-title">
+      <h2 id="context-title">Recorded constraints and limitations</h2>
+      <table class="grid"><thead><tr><th scope="col">JSON path</th><th scope="col">recorded value</th></tr></thead><tbody id="context-recorded"></tbody></table>
+    </section>
+    <details><summary>Retained snapshot and capture provenance (JSON)</summary><h3>snapshot</h3><pre id="proof-raw"></pre><h3>provenance</h3><pre id="provenance-raw"></pre></details>
+  </div>
+</section>
+
+<section id="ask-view" class="view" aria-labelledby="ask-h" hidden>
+  <h1 id="ask-h">Ask</h1>
+  <p class="lead">This hosted workspace provides deterministic, read-only inspection of synthetic records and a separate retained processing-and-replication proof. Llama explanations run only in the optional local workbench; no model runs on this page.</p>
+  <p>The local workbench runs a pinned Llama model on your own computer and can explain one frozen synthetic record through a read-only inspector tool. Its text may be wrong or withheld, and it cannot execute workers, approve actions or verify stored copies. It needs a local install and separately licensed model weights; this hosted page has no interactive model or generated answers.</p>
+  <ul class="links">
+    <li><a href="https://docs.mehridian.tech/edge-evidence/local-workbench/">Local workbench guide</a></li>
+    <li><a href="https://github.com/Seemorghdev/edge-evidence-reference-platform-public/tree/main/examples/local-llama-workbench">Local workbench source</a></li>
+    <li><a href="https://mehridian.tech/projects/edge-evidence">Project overview</a></li>
+  </ul>
+</section>
+
+</main>
+<footer><span>Synthetic evidence · read-only · no live worker execution</span><a href="https://docs.mehridian.tech/edge-evidence/boundaries/">Boundaries and verification</a></footer>
+</body></html>
