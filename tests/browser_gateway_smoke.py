@@ -53,18 +53,20 @@ def exercise_gateway(page: Page, url: str, *, screenshot_prefix: str) -> None:
     console_errors, failed_requests, bad_responses = observe_browser(page)
     page.goto(url, wait_until="networkidle", timeout=30_000)
     page.locator("#facts-content").wait_for(state="visible")
-    buttons = page.locator(".record-button")
+    buttons = page.locator("#records-body .row-select")
     assert buttons.count() == 3
     page.screenshot(path=f"{screenshot_prefix}-inspect.png", full_page=True)
     for index in range(3):
         buttons.nth(index).click()
         expect(page.locator("#facts-content")).to_be_visible()
-        assert page.locator("#fact-mutation").inner_text() == "No"
+        assert page.locator("#fact-mutation").inner_text() == "false"
         assert page.locator("#fact-explanation").inner_text().strip()
     page.locator('[data-view="proof"]').click()
     page.locator("#proof-content").wait_for(state="visible")
-    assert page.locator("#source-size").inner_text() == page.locator("#target-size").inner_text()
+    source = page.locator("#proof-source-digest").inner_text()
+    assert source and source == page.locator("#proof-target-digest").inner_text()
     assert "unknown" in page.locator("#proof-time").inner_text()
+    assert page.locator("#proof-steps .step-button").count() > 0
     page.screenshot(path=f"{screenshot_prefix}-proof.png", full_page=True)
     page.locator('[data-view="ask"]').click()
     assert "no model runs on this page" in page.locator("#ask-view").inner_text()
