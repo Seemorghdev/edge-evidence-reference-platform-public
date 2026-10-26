@@ -1,0 +1,74 @@
+name: Live observation
+
+# Once a day, GitHub's runner (not the author) fetches the hosted demo's
+# served files, compares their git blob IDs with a pinned public commit,
+# checks the Proof endpoint, and appends a dated record to the
+# `live-observations` branch. The run fails visibly if anything differs.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-observation
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    env:
+      SITE: https://edge-evidence.apps.mehridian.tech
+      PIN: 78136e8c40af18b3db8ee1a57eabff8aa8c79db5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch, compare and record
+        shell: bash
+        run: |
+          set -u
+          ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          status=pass
+          files=""
+          while read -r url path; do
+            [ -z "${url:-}" ] && continue
+            case "$url" in \#*) continue ;; esac
+            code=$(curl -sS -o body.tmp -w '%{http_code}' "$SITE$url" || echo 000)
+            live=$(git hash-object body.tmp 2>/dev/null || echo none)
+            want=$(git rev-parse "$PIN:$path" 2>/dev/null || echo missing)
+            if [ "$code" = "200" ] && [ "$live" = "$want" ]; then ok=true; else ok=false; status=fail; fi
+            files="$files{\"url\":\"$url\",\"path\":\"$path\",\"http\":\"$code\",\"live_blob\":\"$live\",\"pinned_blob\":\"$want\",\"match\":$ok},"
+          done < .github/live-observation-files.txt
+          rm -f body.tmp
+
+          proof=$(curl -sS "$SITE/api/review/proof" || echo '{}')
+          kind=$(printf '%s' "$proof" | jq -r '[.. | objects | .kind? | select(. != null)] | if length > 0 then (.[0] | tostring) else "missing" end')
+          executes=$(printf '%s' "$proof" | jq -r '[.. | objects | .executes? | select(. != null)] | if length > 0 then (.[0] | tostring) else "missing" end')
+          if [ "$kind" != "recorded-playback" ] || [ "$executes" != "false" ]; then status=fail; fi
+
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          record="{\"observed_at\":\"$ts\",\"observer\":\"github-actions scheduled workflow\",\"site\":\"$SITE\",\"pinned_commit\":\"$PIN\",\"files\":[${files%,}],\"proof_kind\":\"$kind\",\"proof_executes\":\"$executes\",\"status\":\"$status\",\"run\":\"$run_url\"}"
+          echo "$record" | jq .
+          echo "Status: $status" >> "$GITHUB_STEP_SUMMARY"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin live-observations >/dev/null 2>&1; then
+            git fetch origin live-observations
+            git checkout -B live-observations origin/live-observations
+          else
+            git checkout --orphan live-observations
+            git rm -rf --quiet .
+          fi
+          mkdir -p observations
+          echo "$record" >> observations/live.jsonl
+          git add observations/live.jsonl
+          git commit -m "Live observation $ts ($status)"
+          git push origin live-observations
+
+          [ "$status" = "pass" ]
