@@ -2,46 +2,19 @@
 
 A history-free, recruiter-facing application projection for evidence-first systems engineering.
 
-The product demonstrates a strict authority split: deterministic workers own evidence and state outside this runtime; the **Evidence API** exposes disposable synthetic projections; the **Edge Agent** performs bounded read-only inspection; and the **Web UI** presents the journey without gaining mutation authority.
+**Status.** Built: three independently packaged services, a read-only browser Gateway, and bounded integration tools. Evidence: 43 tests pass with Python 3.12 and the hosted FastAPI/Starlette pins. Limits: synthetic artifacts only; no production traffic, durable evidence authority, provider deployment, or autonomous operation.
 
-## Public reviewer entry points
+## Quick-start
 
-Try the [live Visual Gateway](https://edge-evidence-visual-gateway-2e3eaeb86f95.herokuapp.com/) to inspect three deterministic synthetic example states, read the [Mehridian case study](https://mehridian.tech/projects/edge-evidence) for the project overview, or explore the [Edge Evidence technical Docs](https://docs.mehridian.tech/edge-evidence/) for setup, contracts, and engineering boundaries. The hosted Gateway is read-only; it does not execute the separate processing and replication workflow.
-
-## Connected workbench source
-
-The revised [model-free Gateway](services/web-ui/HOSTED-WORKBENCH.md) brings together
-**Inspect**, a separate **retained Proof**, and an **Ask** view explaining how to run
-[the optional local Llama workbench](examples/local-llama-workbench/README.md).
-The hosted interface is model-free: it never calls a reviewer’s computer or runs
-inference. Application deployment is separate from obtaining this source.
-
-Original code and synthetic assets are Apache-2.0. Model weights are obtained
-separately under their own terms; dependency/upstream notices are preserved.
-Model output and provisional streaming are not authoritative inspector facts.
-Known limitations include delayed/bursty streaming and unhelpful or withheld answers.
-No recording is included or required to inspect this code.
-
-## Three-service product story
-
-| Service | Responsibility | Authority boundary |
-| --- | --- | --- |
-| Evidence API | Serves deterministic synthetic artifact and receipt projections. | Disposable projection only; not evidence authority. |
-| Edge Agent | Classifies supplied projections and explains state. | Read-only inspection; cannot execute workers or mutate evidence/infrastructure. |
-| Web UI | Renders artifacts and requests inspection from the browser. | Presentation only. |
-
-The optional model/ADK adapter is disabled by default. Enabling it does not change the inspection-only authority contract.
-
-## Quick reviewer path
-
-Requirements: Python 3.11–3.13 and Docker with Compose support. No cloud account or provider credential is required.
+Requirements: Python 3.11–3.13 and Docker with Compose support. No cloud account or provider credential is required. The checked setup uses Python 3.12.13. From the repository root:
 
 ```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
 python scripts/install_workspace.py --dev
+python -m pip install --no-deps fastapi==0.128.2 starlette==0.50.0
 make check
-
-docker compose -f deploy/compose/docker-compose.yml \
-  up --build evidence-api edge-agent web-ui
+docker compose -f deploy/compose/docker-compose.yml up --build evidence-api edge-agent web-ui
 ```
 
 Open <http://localhost:8082/>. The page should render exactly three deterministic synthetic artifacts with states `complete`, `deferred`, and `prepared`. Inspecting the complete artifact returns the deterministic `healthy-complete` classification.
@@ -65,6 +38,42 @@ Clean shutdown:
 ```bash
 docker compose -f deploy/compose/docker-compose.yml down --remove-orphans
 ```
+
+## Tests
+
+`make check`: 43 tests passed; Ruff, the projection boundary, and Compose configuration all pass. Locally checked with Python 3.12.13, FastAPI 0.128.2, and Starlette 0.50.0. CI: `required.yml` and `gateway-container.yml` are green on the default branch.
+
+## How it fits
+
+This is the public UI, API, and inspector source for [Edge Evidence](https://mehridian.tech/projects/edge-evidence). The hosted Gateway is read-only; it does not execute the separate processing and replication workflow. The [technical Docs](https://docs.mehridian.tech/edge-evidence/) cover setup, contracts, and engineering boundaries.
+
+The product demonstrates a strict authority split: deterministic workers own evidence and state outside this runtime; the **Evidence API** exposes disposable synthetic projections; the **Edge Agent** performs bounded read-only inspection; and the **Web UI** presents the journey without gaining mutation authority.
+
+| Service | Responsibility | Authority boundary |
+| --- | --- | --- |
+| Evidence API | Serves deterministic synthetic artifact and receipt projections. | Disposable projection only; not evidence authority. |
+| Edge Agent | Classifies supplied projections and explains state. | Read-only inspection; cannot execute workers or mutate evidence/infrastructure. |
+| Web UI | Renders artifacts and requests inspection from the browser. | Presentation only. |
+
+The optional model/ADK adapter is disabled by default. Enabling it does not change the inspection-only authority contract.
+
+## Licence
+
+Apache-2.0. See `LICENSE` and `NOTICE`.
+
+## Public reviewer entry points
+
+Try the [live Visual Gateway](https://edge-evidence-visual-gateway-2e3eaeb86f95.herokuapp.com/) to inspect three deterministic synthetic example states, read the [Mehridian case study](https://mehridian.tech/projects/edge-evidence) for the project overview, or explore the [Edge Evidence technical Docs](https://docs.mehridian.tech/edge-evidence/) for setup, contracts, and engineering boundaries. The hosted Gateway is read-only; it does not execute the separate processing and replication workflow.
+
+## Connected workbench source
+
+The revised [model-free Gateway](services/web-ui/HOSTED-WORKBENCH.md) brings together
+**Inspect**, a separate **retained Proof**, and an **Ask** view explaining how to run
+[the optional local Llama workbench](examples/local-llama-workbench/README.md).
+The hosted interface is model-free: it never calls a reviewer’s computer or runs
+inference. Application deployment is separate from obtaining this source.
+
+Original code and synthetic assets are Apache-2.0. Model weights are obtained separately under their own terms; dependency and upstream notices are preserved. Model output and provisional streaming are not authoritative inspector facts. Known limitations include delayed/bursty streaming and unhelpful or withheld answers. No recording is included or required to inspect this code.
 
 ## Browser and same-origin integration
 
