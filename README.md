@@ -2,6 +2,8 @@
 
 A history-free, recruiter-facing application projection for evidence-first systems engineering.
 
+**[Try the live Visual Gateway](https://edge-evidence-visual-gateway-2e3eaeb86f95.herokuapp.com/)**: three synthetic example states; read-only.
+
 **Status.** Built: three independently packaged services, a read-only browser Gateway, and bounded integration tools. Evidence: 43 tests pass with Python 3.12 and the hosted FastAPI/Starlette pins. Limits: synthetic artifacts only; no production traffic, durable evidence authority, provider deployment, or autonomous operation.
 
 ## Quick-start
@@ -56,10 +58,6 @@ The product demonstrates a strict authority split: deterministic workers own evi
 | Web UI | Renders artifacts and requests inspection from the browser. | Presentation only. |
 
 The optional model/ADK adapter is disabled by default. Enabling it does not change the inspection-only authority contract.
-
-## Licence
-
-Apache-2.0. See `LICENSE` and `NOTICE`.
 
 ## Public reviewer entry points
 
@@ -123,3 +121,7 @@ deploy/kubernetes/base/   generic workload intent only
 docs/                     recruiter-facing architecture and authority docs
 tests/                    application and projection-boundary tests
 ```
+
+## Licence
+
+Apache-2.0. See `LICENSE` and `NOTICE`.
